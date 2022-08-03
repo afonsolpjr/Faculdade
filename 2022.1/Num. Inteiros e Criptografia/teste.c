@@ -18,7 +18,7 @@ int main (void)
     
     while(opcao!=0)
     {
-        puts("\n\nQual operacao deseja?\n\n"
+        puts("\n\nQual operacao kkkkkkkkkkkkkk deseja?\n\n"
         "[1] Teste de fermat, inserindo o numero e base a ser testada.\n"
         "[2] Testa se numero dado é primo ou carmichael.\n"
         "[3] TEste de Miller-Rabin para o numero dado.\n"
