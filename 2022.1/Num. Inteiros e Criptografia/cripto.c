@@ -36,6 +36,7 @@ int main(void)
 {
 	int opcao=-1;
 	long int b,*q_r,*xy,a,*lista;
+	
 	while(opcao!=0)
 	{
 		puts("\n\n\n\n[*~*~*~*~*~*~]\nInsira a operação que deseja fazer:\n"
@@ -623,24 +624,25 @@ int miller_rabin(mpz_t numero,int base_i)
     } // pegar q e k
     mpz_set(q,par);
     mpz_powm(modulo,base,q,numero);
-	mpz_set_si(par,2);
+	mpz_set_si(par,1);
 
-    // gmp_printf("TEmos q=%Zd e k=%Zd\n"
-    // "i=%Zd e modulo=%Zd\n",q,k,i,modulo);
+	// gmp_printf("TEmos q=%Zd e k=%Zd\n"
+	// "i=%Zd e modulo=%Zd\n",q,k,i,modulo);
 
     while(mpz_cmp(i,k))
     {
 
 		// gmp_printf("testando %Zd elevado a (%Zd elevado a %Zd) * %Zd ) mod %Zd\n"
 		// "que é %Zd\n",base,par,i,q,numero,modulo);
-        if( ( !mpz_cmp(modulo,limite) || 
-		!mpz_cmp_ui(i,0) && !mpz_cmp_si(modulo,1)) ||
+
+        if(  !mpz_cmp(modulo,limite) || 
+		(!mpz_cmp_ui(i,0) && !mpz_cmp_si(modulo,1)) ||
 		( mpz_cmp_si(i,0) && !mpz_cmp(par,limite) )    )
         {
             return 0; // se pseudoprimo forte a base
         }
         mpz_add_ui(i,i,1); // par vai ser o expoente
-		mpz_powm_ui(par,par,2,numero);
+		mpz_mul_si(par,par,2);
 		mpz_mul(par,par,q);
         mpz_powm(modulo,base,par,numero);
     }
@@ -690,10 +692,10 @@ void exibir_pseudoprimos()
     
 }
 
-void mostrar_fatorando(void)
+void mostrar_fatorando(void)	
 {	
+	mpz_t num,aux,mod,sqr;
 	int opcao;
-	float rz;
 	long int i,numero;
 	puts("\n\n[*~*~*~*~*~*~*~*~*~*~*~*~]\n"
 	"\nVocẽ deseja fatorar até N ou fatorar N\n?"
@@ -701,12 +703,23 @@ void mostrar_fatorando(void)
 	"[2] Para fatorar até N\n");
 
 	opcao = valida_int();
+	mpz_init(num);
+	mpz_init_set_si(aux,2);
+	mpz_init(mod);
+	mpz_init(sqr);
 	puts("\n\nInsira N:");
-	scanf("%ld",&numero);
+	gmp_scanf("%Zd",num);
+	if(mpz_fits_slong_p(num))
+	{
+		numero = mpz_get_si(num);
+		printf("\n[Numero %ld cabe em long int..]\n",numero);
+		
+	}
+	else opcao=3;
 
 	if(opcao==2)
 	{
-		for(i=2;i<numero;i++)
+		for(i=3;i<numero;i+=2)
 		{
 			if(checa_primalidade(i))
 			{
@@ -714,22 +727,40 @@ void mostrar_fatorando(void)
 			}
 		}
 	}
-	else
+	else if(opcao==1)
 	{
 		if(checa_primalidade(numero))
 		{
-			printf("\n\t\t\t\tO numero %ld é primo.\n");
+			printf("\n\t\t\t\tO numero %ld é primo.\n",numero);
 		}
 		else
 		{
-			printf("\n\t\t\t\tO numero %ld é composto.\n");
+			printf("\n\t\t\t\tO numero %ld é composto.\n",numero);
 		}		
+	}
+	else
+	{
+		mpz_root(sqr,num,2);
+		while(mpz_cmp(aux,sqr))
+		{
+			mpz_mod(mod,num,aux);
+			gmp_printf("testando fator: %Zd\n",aux);
+			if(!mpz_cmp_si(mod,0))
+			{
+				gmp_printf("\n\t\t\t O numero %Zd é composto e tem um fator = %Zd\n",num,aux);
+				return;
+			}
+			mpz_add_ui(aux,aux,1);
+		}
+		gmp_printf("\n\t\t\t O numero %Zd é primo.",num);
+
+
 	}
 }
 
 void mostrar_testando(void)
 {
-	mpz_t candidato;
+	mpz_t candidato,aux;
 	long int num,testes,i,k,primo=1,r;
 	puts("\n\n\n[*~*~*~*~*~*~*~*~*~*~*~*~]\n"
 	"Insira o numero limite N (tipo int, nao usarei a GMP):");
@@ -738,25 +769,33 @@ void mostrar_testando(void)
 	testes=valida_int();
 
 	mpz_init(candidato);
+	mpz_init(aux);
 	
-	for(i=2;i<num;i++)
-	{
+	for(i=5;i<num;i+=2)
+	{	
+		primo=1;
 		mpz_set_si(candidato,i);
 		for(k=0;k<testes;k++)
 		{
-			// PRECISA GERAR NUMEROS RELATIVAMENTE PRIMOS A CANDIDATO OU A i AQUI 
+			while(1)
+			{
+				r=(rand()%i);
+				mpz_gcd_ui(aux,candidato,r);
+				if(!mpz_cmp_si(aux,1) && r!=1 && r!=i-1) break;
+			}
+
 			if(miller_rabin(candidato,r))
 			{
-				printf("%d é composto\n",i);
+				//printf("%ld é composto e r=%ld\n",i,r);
 				primo = 0;
 				break;
 			}
-			if(primo)
-			{
-				gmp_printf("\n \t\t\t\t\t\t\t%Zd é um provavel primo.",candidato);
-			}
 		}
 
+		if(primo)
+		{
+			gmp_printf("\n \t\t\t\t\t\t\t%Zd é um provavel primo. r=%d\n",candidato,r);
+		}
 	}
 
 }
