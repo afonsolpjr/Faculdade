@@ -17,7 +17,7 @@ int main(void)
 {
     srand(time(NULL));
 
-        mpz_t p,q,e,d,n,fi,pf,qf,mdc;
+    mpz_t p,q,e,d,n,fi,pf,qf,mdc;
 
 
     puts("\t\t\t\t\t\t[GERADOR DE CHAVE RSA.......]\n\n"
