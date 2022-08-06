@@ -1,0 +1,419 @@
+/*      LISTA 4B - AFONSO LUSTOSA PIRES JUNIOR  */
+
+
+
+
+/*  EXERCÍCIO 1:
+
+#include <stdio.h>
+
+int main(void)
+{
+    int i=0;
+    while(i<=20)
+    {
+        if(i==2)
+        {
+            i++;
+            continue;
+        }
+        if(i==5) break;
+        printf("i=%d\n",i);
+        i++;
+    }
+    return 0;
+}  */
+
+
+
+/*  EXERCÍCIO 2:
+
+ENTRADA:12,4,3
+
+SAÍDA: O número de pessoas foi=3
+A idade média do grupo foi=6
+A menor idade foi:3
+A maior idade foi:12
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+    int idade=1,soma_idades=0,min=0,max=0,valido,num_pessoas=0,media;
+
+
+    while(idade!=0)
+    {
+        puts("\nInsira a idade do indivíduo: ");
+        while((valido=scanf("%d",&idade))==0)
+            {
+                puts("\nInsira uma idade válida para o indivíduo: ");
+                valido=scanf("%d",&idade);
+                getchar();
+            }
+        
+        if(idade==0) continue;
+        if(soma_idades==0)
+        {
+            min=idade;
+            max=idade;
+        }
+
+        soma_idades+=idade;
+        num_pessoas++;
+        if(idade>max) max=idade;
+        if(idade<min) min=idade;
+    }
+
+    if(num_pessoas!=0) 
+    {
+        media=soma_idades/num_pessoas;
+        printf("\nO número de pessoas foi=%d\nA idade média do grupo foi=%d\nA menor idade foi:%d\nA maior idade foi:%d",num_pessoas,media,min,max);
+    }
+   
+  
+    return 0;
+}   */
+
+
+
+
+
+/*      EXERCÍCIO 3:
+ENTRADA: 8,8,10
+SAÍDA: A media das notas foi 8.7
+
+#include <stdio.h>
+
+int main(void)
+{   
+    int nota,valido,lixo,soma_notas=0,num_notas=0;
+    float media;
+
+    while(num_notas<3)
+    {
+        puts("\nInsira a nota: ");
+        valido=scanf("%d",&nota);
+        while(valido==0)
+        {
+            while((lixo=getchar()) != EOF && lixo!= '\n');
+            puts("\nInsira uma nota válida: ");
+            valido=scanf("%d",&nota);
+        }
+
+        if(nota<0) return 0;
+        num_notas++;
+        soma_notas+=nota;
+
+        if(num_notas==3)
+        {
+            media=(float)soma_notas/num_notas;
+            printf("\n       A média das notas foi %.1f\n\n",media);
+            soma_notas=0;
+            num_notas=0;
+        }
+    }
+
+    return 0;
+}  */
+
+
+
+
+
+/* EXERCÍCIO 4
+
+ENTRADA: Insira o total da compra: R$100
+Insira o tipo de cliente.
+[1] para clientes comuns
+[2] Para funcionários
+[3] Para clientes VIP.
+
+3
+
+SAÍDA: O valor total da compra foi: R$95.00
+
+#include <stdio.h>
+
+int main(void)
+{   
+    float total;
+    int valido,lixo,tipo_cliente;
+    puts("\nInsira o total da compra: ");
+    valido=scanf("%f",&total);
+    while(valido==0)
+    {
+        while((lixo=getchar()) != EOF && lixo!= '\n');
+        puts("\nInsira uma quantia válida: ");
+        valido=scanf("%f",&total);
+    }
+
+    puts("\nInsira o tipo de cliente.\n[1] para clientes comuns\n[2] Para funcionários\n[3] Para clientes VIP.\n");
+    valido=scanf("%d",&tipo_cliente);
+    while(valido==0 || (tipo_cliente>3 || tipo_cliente <1))
+    {
+        while((lixo=getchar()) != EOF && lixo!= '\n');
+        puts("\nInsira um identificador de cliente válido: ");
+        valido=scanf("%d",&tipo_cliente);
+    }
+    
+    switch(tipo_cliente)
+    {
+        case 1:
+            break;
+
+        case 2:
+            total=total*0.9;
+            break;
+
+        case 3:
+            total=total*0.95;
+            break;
+    }
+    printf("\nO valor total da compra foi: R$%.2f",total);
+
+
+
+
+        
+    return 0;
+}   */
+
+
+
+
+/*          EXERCÍCIO 5
+
+ENTRADA:Insira o numero do mes: 8
+SAÍDA: O mês digitado é Agosto
+
+#include <stdio.h>
+#include <string.h>
+
+int main(void)
+{
+    int n_mes,lixo,valido;
+    char mes[10];
+
+    puts("\nInsira o numero do mês: ");
+    valido=scanf("%d",&n_mes);
+    while(valido==0 || n_mes<1 || n_mes>12)
+    {
+        while((lixo=getchar()) != EOF && lixo!= '\n');
+        puts("\nInsira um valor valido: ");
+        valido=scanf("%d",&n_mes);
+    }
+
+    switch(n_mes)
+    {
+        case 1:
+            strcpy(mes,"Janeiro");
+            break;
+        
+        case 2:
+            strcpy(mes,"Fevereiro");
+            break;
+
+        case 3:
+            strcpy(mes,"Marco");
+            break;
+
+        case 4:
+            strcpy(mes,"Abril");
+            break;
+
+        case 5:
+            strcpy(mes,"Maio");
+            break;
+
+        case 6:
+            strcpy(mes,"Junho");
+            break;
+
+        case 7:
+            strcpy(mes,"Julho");
+            break;
+
+        case 8:
+            strcpy(mes,"Agosto");
+            break;
+
+        case 9:
+            strcpy(mes,"Setembro");
+            break;
+
+        case 10:
+            strcpy(mes,"Outubro");
+            break;
+
+        case 11:
+            strcpy(mes,"Novembro");
+            break;
+
+        case 12:
+            strcpy(mes,"Dezembro");
+            break;
+    }
+    printf("\n O mês digitado foi  %s\n",mes);
+
+    return 0;
+}
+
+*/
+
+/*      EXERCÍCIO 6     
+
+SAIDA:
+
+  <CONVERSÃO DE BASES>
+
+[1]Decimal para hexadecimal
+[2]Hexadecimal para decimal
+[3]Decimal para octal
+[4]Octal para decimal
+[5]Encerrar o programa
+                                [ENTRADA]:1
+
+Insira um numero decimal:
+                                [ENTRADA]15
+
+O numero 15 em hexadecimal= F
+
+Deseja retornar ao menu principal?
+[1]Para retornar
+[2]Para fechar o programa
+
+
+
+
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+    int lixo,valido,operacao;
+    int hex,oct,dec;
+    int retorna=1;
+
+
+    while(retorna==1)
+    {
+        puts("\t\t\t\t<CONVERSÃO DE BASES>\n\n"
+        "[1]Decimal para hexadecimal\n"
+        "[2]Hexadecimal para decimal\n"
+        "[3]Decimal para octal\n"
+        "[4]Octal para decimal\n"
+        "[5]Encerrar programa\n" );
+
+        valido=scanf("%d",&operacao);
+        while(valido==0 || operacao<1 || operacao>4)
+        {
+            while((lixo=getchar()) != EOF && lixo!= '\n');
+            puts("\nInsira um valor valido: ");
+            valido=scanf("%d",&operacao);
+        }
+
+        switch(operacao)
+        {
+            case 1:
+                puts("\nInsira um numero decimal:");
+                valido=scanf("%u",&dec);
+                while(valido==0)
+                {
+                    while((lixo=getchar()) != EOF && lixo!= '\n');
+                    puts("\nInsira um decimal valido: ");
+                    valido=scanf("%d",&dec);
+                }
+                if(dec<0)
+                {
+                  printf("\nO numero %d em hexadecimal= -%X\n\n",dec,-1*dec);
+              
+                }
+                else
+                {
+                printf("\nO numero %d em hexadecimal= %X\n\n",dec,dec);
+                }
+
+                break;
+
+
+            case 2:
+                puts("\nInsira o numero hexadecimal:");
+                valido=scanf("%x",&hex);
+                while(valido==0)
+                {
+                    while((lixo=getchar()) != EOF && lixo!= '\n');
+                    puts("\nInsira um hexadecimal valido: ");
+                    valido=scanf("%x",&hex);
+                }
+                if(hex<0)
+                {
+                  printf("\n O hexadecimal -%x em decimal= %d\n",hex*-1,hex);
+                }
+                else
+                {
+                printf("\nO hexadecimal %x em decimal= %d\n\n",hex,hex);
+                }
+                break;
+
+            case 3:
+                puts("\nInsira um numero decimal:");
+                valido=scanf("%u",&dec);
+                while(valido==0)
+                {
+                    while((lixo=getchar()) != EOF && lixo!= '\n');
+                    puts("\nInsira um decimal valido: ");
+                    valido=scanf("%u",&dec);
+                }
+                if(dec<0)
+                {
+                  printf("\nO numero %d em octal= -%o\n\n",dec,dec*-1);
+                }
+                else
+                {
+                printf("\nO numero %d em octal= %o\n\n",dec,dec);
+                }
+
+                break;
+
+            case 4:
+                puts("\nInsira o numero octal:");
+                valido=scanf("%o",&oct);
+                while(valido==0)
+                {
+                    while((lixo=getchar()) != EOF && lixo!= '\n');
+                    puts("\nInsira um octal valido: ");
+                    valido=scanf("%o",&oct);
+                }
+                if(oct<10)
+                {
+                  printf("\nO octal -%o em decimal= %d",oct*-1,oct);
+                }
+                else{
+                printf("\nO octal %o em decimal= %d\n\n",oct,oct);}
+
+
+                break;
+            case 5:
+              return 0;
+        }
+
+
+        puts("Deseja retornar ao menu principal?\n[1]Para retornar\n[2]Para fechar o programa\n");
+        valido=scanf("%d",&retorna);
+        while(valido==0 || (retorna !=1 && retorna != 2))
+        {
+            while((lixo=getchar()) != EOF && lixo!= '\n');
+            puts("Deseja retornar ao menu principal?\n[1]Para retornar\n[2]Para fechar o programa\n");
+            valido=scanf("%d",&retorna);
+        }
+    }
+
+
+    return 0;
+
+}           */

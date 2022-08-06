@@ -1,0 +1,242 @@
+/*             EXERCÍCIO 5      */    
+ 
+/*ENTRADA: Insira a nota da prova: 8
+Insira a nota do 1º teste: 8
+Insira a nota do 2º teste: 10
+INsira a nota do 3º teste:3
+
+SAÍDA:
+Nota final:7.8
+ */
+#include <stdio.h>
+int main (void) {
+
+    float notaFinal,prova,teste1,teste2,teste3;
+    prova=11;
+    teste1=11;
+    teste2=11;
+    teste3=11;
+
+
+    while(prova<0 || prova>10){           /* perguntando e validando notas para serem >=0 ou <=10 */
+        puts("\nInsira a nota da prova:");
+        scanf("%f",&prova);
+        if (prova<0 || prova>10){
+            puts("\n ATENÇÃO! Insira um valor válido entre 0 e 10!");
+        }
+
+    }
+    
+    while(teste1<0 || teste1>10){
+        puts("\nInsira a nota do 1º teste:");
+        scanf("%f",&teste1);
+        if (teste1<0 || teste1>10){
+
+            puts("\n ATENÇÃO! Insira um valor válido entre 0 e 10!");
+        }
+
+    } 
+
+    while(teste2<0 || teste2>10){
+        puts("\nInsira a nota do 2º teste:");
+        scanf("%f",&teste2);
+        if (teste2<0 || teste2>10){
+        
+            puts("\n ATENÇÃO! Insira um valor válido entre 0 e 10!");
+        }
+
+    }
+
+    while(teste3<0 || teste3>10){
+        puts("\nInsira a nota do 3º teste:");
+        scanf("%f",&teste3);
+        if (teste3<0 || teste3>10){
+        
+            puts("\n ATENÇÃO! Insira um valor válido entre 0 e 10!");
+        }
+
+    }
+
+                             /* calculando a media final */
+    notaFinal=(prova*0.8) + (0.2 *((teste1 + teste2 + teste3)/3));
+
+    printf("\nNota final:%.1f",notaFinal);
+
+
+    
+    
+    return 0;
+}  
+
+/*                         EXERCICIO 6  */
+/*ENTRADA:
+ >>> Soma de todos os termos de 0 a n
+Insira n: 100
+
+
+SAÍDA: A soma de todos os inteiros de 0 a 100 é: 5050 */
+#include <stdio.h>
+
+int main(void){
+
+    int soma,limite_n;
+    puts("\n >>> Soma de todos os termos de 0 a n <<<\nInsira n:");
+    scanf("%d",&limite_n);
+    soma=((1+limite_n)*limite_n)/2;
+
+    printf("\n A soma de todos inteiros de 0 a %d é: %d",limite_n,soma);
+
+
+    return 0;
+}     
+
+
+/*                       EXERCÍCIO 7 */
+/*ENTRADA:
+Insira a 1ª nota: 8
+Insira a 2ª nota: 9
+Insira a 3ª nota: 1
+
+SAÍDA:
+A média é: 6.0
+Aprovado!     */
+#include <stdio.h>
+int main(void){
+
+    float notaAluno=0;
+    float mediaAluno=0;
+
+    puts("\nInsira a 1ª nota:"); 
+    scanf("%f",&notaAluno);
+    mediaAluno=mediaAluno+notaAluno;
+
+
+    puts("\nInsira a 2ª nota:");
+    scanf("%f",&notaAluno);
+    mediaAluno=mediaAluno+notaAluno;
+
+
+    puts("\nInsira a 2ª nota:");
+    scanf("%f",&notaAluno);
+    mediaAluno=mediaAluno+notaAluno;
+
+    mediaAluno=mediaAluno/3;
+
+    printf("\nA média é:%.1f\n",mediaAluno);
+
+    if(mediaAluno>=5.0){
+        printf("Aprovado!\n");
+    }
+    else{
+        printf("Reprovado.\n");
+    }
+    
+    return 0;
+} 
+
+/*                   EXERCICIO 8  */
+
+/*ENTRADA:
+Quantas provas? 2
+Insira a nota da 1ª prova: 5
+Insira a nota da 2a prova:9
+
+SAÍDA:
+A média do aluno foi 7.0
+Aprovado!*/
+#include <stdio.h>
+int main(void){
+    float notaAluno;
+    float mediaAluno = 0.0;
+    int notasLidas=0;
+    int quantProvas;
+
+    puts("Quantas provas?");
+    scanf("%d",&quantProvas);
+
+
+    while(notasLidas < quantProvas){
+        printf("\nInsira a nota da %dº prova:",notasLidas+1);     /* adicionei mais uma instrução pro usuário aqui */
+        scanf("%f",&notaAluno);
+        mediaAluno=mediaAluno+notaAluno;
+        notasLidas=notasLidas+1;
+
+    }
+
+    mediaAluno=mediaAluno/quantProvas;
+    printf("A média do aluno foi %.1f\n",mediaAluno);
+
+    if(mediaAluno>=5.0){
+        printf("Aprovado!\n");
+    }
+    else{
+        printf("Reprovado.\n");
+    }  
+    
+    return 0;
+}
+
+/*                       EXERCICIO 9*/
+/*ENTRADA: 
+Insira a data de nascimento da  primeira pessoa: 1 3 1999
+Insira a data de nascimento da segunda pessoa: 1 8 1999
+
+SAIDA:
+A primeira é mais velha.
+*/
+
+#include <stdio.h>
+int main(void){
+    int dia1,mes1,ano1,dia2,mes2,ano2,mais_velho;
+
+
+
+    puts("\nInsira a data de nascimento da primeira pessoa:");
+    scanf("%d" "%d" "%d",&dia1,&mes1,&ano1);
+
+
+    puts("\nInsira a data de nascimento da segunda pessoa:");
+    scanf("%d" "%d" "%d",&dia2,&mes2,&ano2);
+
+
+
+    if(ano1>ano2){
+        mais_velho=2;
+    }
+    else if(ano2>ano1){
+        mais_velho=1;
+    }
+    if(ano1==ano2){
+        if(mes1>mes2){
+            mais_velho=2;
+        }
+        else if(mes2>mes1){
+            mais_velho=1;
+        }
+        if(mes1==mes2){
+            if(dia1>dia2){
+                mais_velho=2;
+            }
+            else if(dia2>dia1){
+                mais_velho=1;
+            }
+            if(dia1==dia2){
+                mais_velho=3;
+            }
+        }
+    }
+    if (mais_velho==1){
+        puts("A primeira é mais velha.");
+    }
+    else if(mais_velho==2){
+        puts("A segunda é mais velha.");
+    }
+    if(mais_velho==3){
+        puts("Nasceram no mesmo dia.");
+    }
+
+
+    
+    
+    return 0;
+}
