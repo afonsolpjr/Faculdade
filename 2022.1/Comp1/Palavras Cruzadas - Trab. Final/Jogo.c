@@ -524,7 +524,7 @@ int checa_opcao(int *indice, int *posicao, int n_palavras, int n_linhas, int n_c
             }
         }
     }
-    puts("Se chegou ate aqui deu erro eu acho\n.");
+    /* puts("Se chegou ate aqui deu erro eu acho\n."); */
     return 1;
 }
 
