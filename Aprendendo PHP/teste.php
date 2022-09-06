@@ -1,6 +1,7 @@
 <?php
 
-echo "Olá Mundo! Meu primeiro código PHP";
+$nome = "Afonso Lustosa Pires Junior";
 
+echo $nome;
 
 ?>
