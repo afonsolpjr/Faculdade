@@ -1,7 +1,18 @@
 <?php
+// Dando um olá mundo com uma string:
 
-$nome = "Afonso Lustosa Pires Junior";
+$ola = "Olá Mundo!";
 
-echo $nome;
+echo $ola;
+
+// Deletando a variavel $ola
+
+unset($ola);
+
+echo "<br>";
+
+echo %ola;
+
+
 
 ?>
