@@ -1,5 +1,5 @@
-<a href="/session/teste.php"> <button>Ir para criador de sessão</button></a>
 
+<a href="teste.php"> <button> Ir para teste.php </button> </a>
 <?php
 
 //abrindo e testando a sessão
@@ -9,7 +9,10 @@ session_start();
 
 
 
-echo "<br> O nome da sessão é : ". $_SESSION['nome'];
+
+var_dump($_SESSION);
+
+
 
 
 
@@ -17,15 +20,16 @@ echo "<br> O nome da sessão é : ". $_SESSION['nome'];
 ?>
 
 
-
-
 // no teste.php
-
-
 
 <form> 
     Nome da sessão: <input type="text" name="nome"> <br>
 </form> 
+<a href="index.php"> <button> Ir para index.php </button> </a>
+
+<form method="post">
+<br><input type="submit"  value="Unset Session" name="unset"> </form>
+
 
 <?php
 
@@ -33,17 +37,28 @@ echo "<br> O nome da sessão é : ". $_SESSION['nome'];
 //criando sessoes
 
 session_start();
-if($_GET)
+
+if(isset($_GET['nome']))
 {
     $_SESSION['nome'] = $_GET['nome'];
 }
-else{
-    echo "<br> Dê um nome à sessão para voltar!";
-}
-if(isset($_SESSION['nome']))
+
+if(isset($_POST['unset']))
 {
-    echo "<br> nome da sessão atualizada<br>";
-    echo "<a href=\"../index.php\"> <button>Ir para index.php</button></a>";
+    echo "<br> Sessão Limpa. <br>";
+
+    session_unset();
+    
 }
 
+
+
+if(isset($_SESSION['nome']))
+{
+    echo "<br> Nome da sessão já existe:". $_SESSION['nome'] . "<br>";
+}
+else
+{
+    echo "<br> Sessão não tem nome!<br>";
+}
 ?>
