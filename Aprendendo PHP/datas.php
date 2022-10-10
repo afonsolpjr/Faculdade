@@ -6,7 +6,7 @@ setlocale(LC_ALL,'ptb'); // só funciona pra strftime parece...
 echo date("H:i:s  l eT   d/m/Y U"); //tem varias formatações
 
 
-echo "<br><br>O numero de segundos que se passaram desde a era unix é ". time() . "<br><br>";
+echo "<br><br>O número de segundos que se passaram desde a era unix é ". time() . "<br><br>";
 echo "Horas q se passaram: " . time()/3600;
 echo "<br>dias q passaram: " . time()/(3600*24);
 echo "<br> anos q passsaram: " . time()/(3600*24*365);
