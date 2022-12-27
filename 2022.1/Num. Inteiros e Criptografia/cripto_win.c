@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <gmp.h> 
+//#include <gmp.h>        Muito trabalho pra funcionar no windows
 #include <time.h>
 
 
