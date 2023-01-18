@@ -3,6 +3,8 @@ table of words:
 “be” “our” “rum” “will”
 “dead” “hook” “ship” “blood”
 “sable” “avenge” “parrot” “captain”
+
+Falta: restrições estão mal colocadas no texto ou n entendi direito... dá uma olhada dps
 */
 
 #include <stdio.h>
