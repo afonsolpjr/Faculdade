@@ -3,7 +3,7 @@ using namespace std;
 
 char substitui(char letra)
 {
-    switch(letra) //MANO teste Eu fiz um código pra gerar essas linhas de codigo, n deu trabalho.. Mas caramba, mesmo assim ainda ta dando TLE
+    switch(letra) //MANO Eu fiz um código pra gerar essas linhas de codigo, n deu trabalho.. Mas caramba, mesmo assim ainda ta dando TLE
     {
     case '1':
             return '`';
