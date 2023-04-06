@@ -74,13 +74,13 @@ public static void main(String[] args)
     System.out.println("\n Insira o numero para cálculo do fatorial: ");
     n = read.nextInt();
     i=n;
+    read.close();
+    
     for(fat=1;n>0;n--)
         fat *= n;
     
     System.out.println(
-        i + "! = " + fat);
-
-
-    read.close();
-}    
+        i + "! = " + fat);    
+}
+    
 }
