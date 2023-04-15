@@ -12,7 +12,7 @@ public class Funcionario
 	{
 		this.nome = nome;
 		this.id_func = proxId++;
-		this.salario_hora = this.salario_hora_min;
+		this.salario_hora = Funcionario.salario_hora_min;
 		System.out.println("Funcionario " + this.nome + " criado com código: #" + id_func);
 	}
 
