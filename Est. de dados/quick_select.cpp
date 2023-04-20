@@ -1,7 +1,8 @@
 #include <iostream>
-#include <cstdlib>
+#include <stdlib.h>
 using namespace std;
-
+// comando bash pra retornar o dobro de -k
+// for((i=0;i<30;i++)) do ((n=i*2)); echo $n; done | ./teste -k 9
 int particiona(int *v, int inicio, int fim)
 {
     int lo=inicio,hi=fim-1,temp,pivot;
@@ -68,9 +69,10 @@ int main(int argc,char *argv[])
 {
     int i,*v,posicao, tam,n_lido;
 
-    tam = posicao = st_toi(argv[1]);
+    posicao = st_toi(argv[2]);
+    tam = posicao + 1; //para caso do numero inserido ser 0;
 
-    v = (int*)calloc(posicao,sizeof(int));
+    v = (int*)calloc(posicao+1,sizeof(int));
     
     if(v==NULL)
     {
@@ -89,7 +91,7 @@ int main(int argc,char *argv[])
         v[i]=n_lido;
     }
 
-    cout << quick_select(v,posicao-1,0,i+1);
+    cout << quick_select(v,posicao,0,i+1);
 
 }
 
@@ -97,11 +99,9 @@ int main(int argc,char *argv[])
 
 
 /* bash para testar
-n=0
 for((i=0;i<100;i++))
 do
-    n=$i%3
-    echo "{$n} "
+    echo "{$i} "
 done
     
     */
