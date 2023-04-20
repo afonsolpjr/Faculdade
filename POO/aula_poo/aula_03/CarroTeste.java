@@ -18,7 +18,7 @@ public class CarroTeste
 		
 		System.out.println("\nInsira o numero de portas: ");
 		n = input.nextInt();
-
+		input.close();
 		carro = new Carro(n);
 
 		if(carro.getQtdPortas()==n)
