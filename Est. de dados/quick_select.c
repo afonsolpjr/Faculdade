@@ -1,8 +1,5 @@
-#include <iostream>
+#include <stdio.h>
 #include <stdlib.h>
-using namespace std;
-// comando bash pra retornar o dobro de -k
-// for((i=0;i<30;i++)) do ((n=i*2)); echo $n; done | ./teste -k 9
 int particiona(int *v, int inicio, int fim)
 {
     int lo=inicio,hi=fim-1,temp,pivot;
@@ -29,6 +26,7 @@ int particiona(int *v, int inicio, int fim)
             lo++;
             hi--;
         }
+
     }
     temp=v[lo];
     v[lo]=pivot;
@@ -41,9 +39,9 @@ int particiona(int *v, int inicio, int fim)
 int quick_select(int *v,int posicao,int inicio,int fim)
 {
     int pos_pivot=-1;
-
     while(pos_pivot!=posicao)
     {
+
         pos_pivot = particiona(v,inicio,fim);
 
         if(pos_pivot > posicao) //pivot é limite superior
@@ -54,6 +52,7 @@ int quick_select(int *v,int posicao,int inicio,int fim)
     return v[pos_pivot];
 
 }
+
 int st_toi(char *str)
 {
     int num,i=0; //   i = nº de algarismos
@@ -65,7 +64,8 @@ int st_toi(char *str)
     }
     return num;
 }
-int main(int argc,char *argv[])
+
+int main(int argc, char *argv[])
 {
     int i,*v,posicao, tam,n_lido;
 
@@ -76,12 +76,14 @@ int main(int argc,char *argv[])
     
     if(v==NULL)
     {
-        cout << "\nProblema de memória.";
+        puts("\nProblema de memoria.\n");
         return 1;
     }
-    i=-1;
-    while(cin >> n_lido) //le os numeros
+    i=-1; //para começar o vetor em 0
+
+    while(!feof(stdin))
     {
+        scanf("%d",&n_lido);
         i++;
         if(i==tam)
         {
@@ -90,19 +92,5 @@ int main(int argc,char *argv[])
         }
         v[i]=n_lido;
     }
-
-    cout << quick_select(v,posicao,0,i+1);
-    free(v);
-
+    printf("%d",quick_select(v,posicao,0,i)); 
 }
-
-
-
-
-/* bash para testar
-for((i=0;i<100;i++))
-do
-    echo "{$i} "
-done
-    
-    */
