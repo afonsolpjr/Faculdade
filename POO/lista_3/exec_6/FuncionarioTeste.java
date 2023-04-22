@@ -1,4 +1,4 @@
-package lista3.exec_6;
+package lista_3.exec_6;
 
 public class FuncionarioTeste
 {

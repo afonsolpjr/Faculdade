@@ -1,4 +1,4 @@
-package lista3.exec_5;
+package lista_3.exec_5;
 
 public class ContaTeste
 {
