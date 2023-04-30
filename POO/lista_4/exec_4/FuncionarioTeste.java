@@ -1,8 +1,9 @@
-package lista_3.exec_6;
+package lista_4.exec_4;
 
 public class FuncionarioTeste
 {
     private static Funcionario func;
+    private static Funcionario func2;
 public static void main(String args[])
 {
     String nome = new String(nome_random());
@@ -145,7 +146,26 @@ public static void main(String args[])
         return;
     }
 
+            //Testando clone
+    System.out.println("\n[Criando funcionario clone]\n ");
 
+    func2 = func.clone();
+
+    System.out.println(
+        "\tFuncionario 2 criado!"
+        + "\n\t\tnome = " + func2.getNome() 
+        + "\n\t\tsalario/hora = " + func2.getSalariohora() );
+
+        //testando equals
+
+    System.out.println(
+        "\n[Testando metodo equals...]\n"
+        + "\n\tfunc2 = func1 ?  " + func2.equals(func)
+        + "\n\tfunc1 = func2 ?  " + func.equals(func2)
+        );
+
+
+    
 
 }
 
