@@ -42,7 +42,7 @@ for x in lista_k:
     aprox=pi_kahan(x)
     
     erro = math.fabs(math.pi - aprox)
-    print("PI recursivo com {} termos : {:.50f}\nErro absoluto de {:.50f}\n".format(x,aprox,erro))
+    print("PI compensado com {} termos : {:.50f}\nErro absoluto de {:.50f}\n".format(x,aprox,erro))
 
 for x in lista_k:
     aprox = euler_kahan(x)
