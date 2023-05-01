@@ -14,8 +14,8 @@ def euler_kahan(n_termo):
         termo = termo/i
         termo_compensado = termo + erro_a_compensar        
         soma += termo_compensado  #compensa erro anterior
-        erro_a_compensar = (soma_antes - soma) + termo_compensado       #calcula do termo efetivamente soma e o termo
-        # print("\nErro a comepnsar = {:.50f}".format(erro_a_compensar) )
+        erro_a_compensar = (soma_antes - soma) + termo_compensado       #calcula do termo efetivamente somado(erro). 
+        #depois diminui do termo que foi somado, dando o erro a ser compensado        
 
 
     return (soma - erro_a_compensar)
