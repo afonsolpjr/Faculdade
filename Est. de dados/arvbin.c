@@ -55,10 +55,12 @@ void insere_no(NO **ptr_raiz,int n)
     if(n > raiz->chave)
     {
         insere_no(&(raiz->dir),n);
+        raiz->nivel = raiz->dir->nivel + 1;
     }
     else
     {
         insere_no(&(raiz->esq),n);
+        raiz->nivel = raiz->esq->nivel +1;
     }
 }
 
