@@ -3,7 +3,7 @@
 
 typedef struct __no
 {
-    int chave,nivel;
+    int chave,altura;
     struct __no *esq;
     struct __no *dir;
 }NO;
@@ -44,7 +44,7 @@ void insere_no(NO **ptr_raiz,int n)
         raiz->chave = n;
         raiz->dir = NULL;
         raiz->esq = NULL;
-        raiz->nivel = 1;
+        raiz->altura = 1;
         return;
     }
     if( busca(raiz,n) !=NULL) //sem dupliocatas
@@ -55,12 +55,12 @@ void insere_no(NO **ptr_raiz,int n)
     if(n > raiz->chave)
     {
         insere_no(&(raiz->dir),n);
-        raiz->nivel = raiz->dir->nivel + 1;
+        raiz->altura = raiz->dir->altura + 1;
     }
     else
     {
         insere_no(&(raiz->esq),n);
-        raiz->nivel = raiz->esq->nivel +1;
+        raiz->altura = raiz->esq->altura +1;
     }
 }
 
