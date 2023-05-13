@@ -122,10 +122,48 @@ int quick_select(int *v,int posicao,int inicio,int fim)
     return pos_pivot;
 
 }
+
+void merge_sort(int inicio,int fim, int *v)
+{
+    int meio = inicio + (fim-inicio)/2;
+    int lo=inicio, hi=meio, *v_temp,i;
+    if(fim-inicio==1)
+        return;
+    
+    merge_sort(inicio,meio,v);
+    merge_sort(meio,fim,v);
+
+    v_temp = (int*) calloc((fim-inicio),sizeof(int));
+    i=0;
+    while(lo<meio && hi<fim)
+    {
+        if(v[lo]<v[hi])
+        {
+            v_temp[i++]=v[lo++];
+        }
+        else
+        {
+            v_temp[i++]=v[hi++];
+        }
+    }
+    while(lo<meio)
+        v_temp[i++]=v[lo++];
+    while(hi<fim)
+        v_temp[i++]=v[hi++];
+    
+    for(i=inicio;i<fim;i++)
+    {
+        v[i]=v_temp[i-inicio];
+    }
+    free(v_temp);
+
+}
+
+
 int main()
 {   
     int *v,n,i;
-    cout << "Selecione o tamanho do vetor. Ele será randomizado com numeros de 1 a n." 
+    cout << "Selecione o tamanho do vetor. Ele será randomizado com numeros de 1 a n, sem duplicatas." 
     << "\nTamanho: ";
     cin >> n;
 
@@ -133,11 +171,31 @@ int main()
 
     // quick_sort(v,0,n);
     // cout <<"\n\npronto\n\n";
-
+    cout << "Vetor desordenado: ";
     printa_vetor(v,0,n);
 
-    cout << "\nselecione a posicao que quer do vetor: ";
+    cout << "\nselecione o que quer do vetor: " <<
+         "\n[1] Quick Sort" <<
+         "\n[2] Merge Sort" <<
+         "\n[3] Quick Select\n";
+
     cin >> i;
 
-    printf(" \n O item na posicao %d é [%d]",i,quick_select(v,i,0,n));
+    switch(i)
+    {
+    case 1:
+        quick_sort(v,0,n);
+        break;
+    case 2:
+        merge_sort(0,n,v);
+        break;
+    case 3:
+        cout << "\n\nSelecione o indice do num que vc deseja: ";
+        cin >> i;
+        printf(" \n O item na posicao %d = [%d]",i,quick_select(v,i,0,n));
+        break;
+    }
+    cout << "\n\tVetor :\n";
+    printa_vetor(v,0,n);
+
 }

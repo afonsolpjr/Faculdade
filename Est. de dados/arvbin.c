@@ -29,7 +29,7 @@ void print_preordem(NO *raiz)
     {
         return;
     }
-    pprintf(" [%d] ",raiz->chave);
+    printf(" [%d] ",raiz->chave);
     print_preordem(raiz->esq);
     print_preordem(raiz->dir);
 

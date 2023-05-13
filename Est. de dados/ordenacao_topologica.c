@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     scanf("%d",&arestas);
     getchar();
-    printf("\nli %d vertices e %d arestas\n",n_vertices,arestas);
+    /* printf("\nli %d vertices e %d arestas\n",n_vertices,arestas); */
 
     /*alocar lista de adjacencias*/
 
@@ -111,7 +111,8 @@ int main(int argc, char *argv[])
         indice_atual++;
     }    
 
-    // printf(" \n\t[ TESTANDO LISTAS ]");          //tudo funcionando normal
+    /* printf(" \n\t[ TESTANDO LISTAS ]");          //tudo funcionando normal */
+
     // for(i=0;i<n_vertices;i++)
     // {
     //     ptr_lista = lista_adj[i];
@@ -127,16 +128,16 @@ int main(int argc, char *argv[])
     //         ptr_lista = ptr_lista->prox;
     //     }
     //     puts("\n");
-    // }
+    // } 
     
     
     indice_atual=0; i=0;
-    while(indice_atual<n_vertices)
+    while(indice_atual<n_vertices)   //cria o array da ordenação
     {
          /*procurar por quem tem contador = 0 e adicionar na ordem*/
             if(lista_adj[i]->contador==0)
             {
-                // printf("\nzerando vertice %d",i);
+                // printf("\n zerando vertice %d",i);
                 ordem_topologica[indice_atual] = i;
                 indice_atual++;
 
@@ -150,8 +151,10 @@ int main(int argc, char *argv[])
                     p_free = ptr_lista;
                     // printf("\n\t vertice %d orfao, diminuindo antecendente...",ptr_lista->chave);
                     lista_adj[ptr_lista->chave]->contador--;
-                    if(lista_adj[ptr_lista->chave]->contador == 0)
+                    if(lista_adj[ptr_lista->chave]->contador == 0)  
                         {
+                            /* se zerou algum, reinicia o iterador pro começo da lista de adjacencias,
+                            menos eficiente pq necessita mais comparações... */
                             i=0;
                             // printf("\n\t\torfao %d zerado ",ptr_lista->chave);
                         }
@@ -163,12 +166,13 @@ int main(int argc, char *argv[])
             else
                 i++;
     }
-    printf("\n\t ORDEM TOPOLOGICA: \n [");
+    
+    //printf("\n\t ORDEM TOPOLOGICA: \n [");
     for(i=0;i<n_vertices;i++)
     {
-        printf("  %d  ",ordem_topologica[i]);
+        printf("%d ",ordem_topologica[i]+1 );
     }
-    puts("]\n");
+    puts("\n");
     return 0;
 }
 
