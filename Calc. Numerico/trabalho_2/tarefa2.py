@@ -134,10 +134,10 @@ for ordem in range(1,4):
         erros.append( [m.fabs(ref[i] - caso_delta[val_delta.index(delta)][i]) for i in range(3)] ) #valor absoluto da referencia - o calculado
     #plotando graficos
     plt.figure(figsize=(10,5)) 
-    plt.plot(x, caso_delta[0], '-ro', label="Δx={}".format(val_delta[0]) )
+    plt.plot(x, caso_delta[0], 'ro', label="Δx={}".format(val_delta[0]) )
     plt.plot(x, caso_delta[1], 'go', label="Δx={}".format(val_delta[1]) )
     plt.plot(x, caso_delta[2], 'bo', label="Δx={}".format(val_delta[2]) )
-    plt.plot(x, caso_delta[0], 'co', label="Δx={}".format(val_delta[3]) )
+    plt.plot(x, caso_delta[3], 'co', label="Δx={}".format(val_delta[3]) )
     plt.plot(x, ref, "k", label="Valor de referencia")
     plt.xlabel("Eixo x")
     string_derivada = ""
@@ -149,10 +149,10 @@ for ordem in range(1,4):
     plt.grid()
     plt.show()
     #plotando erros
-    plt.plot(x, erros[0], '-ro', label="Erro para Δx={}".format(val_delta[0]) )
+    plt.plot(x, erros[0], 'ro', label="Erro para Δx={}".format(val_delta[0]) )
     plt.plot(x, erros[1], 'go', label="Erro para Δx={}".format(val_delta[1]) )
     plt.plot(x, erros[2], 'bo', label="Erro para Δx={}".format(val_delta[2]) )
-    plt.plot(x, erros[0], 'co', label="Erro para Δx={}".format(val_delta[3]) )
+    plt.plot(x, erros[3], 'co', label="Erro para Δx={}".format(val_delta[3]) )
     plt.plot(x,[0*i for i in range(3)],"k")
     plt.legend(fontsize=10)
     plt.xlabel("Eixo x")
