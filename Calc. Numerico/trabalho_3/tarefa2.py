@@ -51,7 +51,16 @@ def newton_interpolation(valor_x,lista_x,lista_y):
     return t
 
 
-#criar lista com 4 listas com os pontos a serem utilizados:
+#funcao que calcula erro maximo dado a lista de valores referencia e valores teste
+def calc_max_error(y_correct,y_test):
+    error = []
+    for i in range(len(y_correct)):
+        temp_error_list = [ math.fabs( y_correct[i] - y_test[j][i] ) for j in range(len(y_test))]
+        error.append(max(temp_error_list))
+    
+    return error
+
+#criar lista com 4 listas, cada uma com os pontos a serem utilizados:
 n = [5,10,15,20]
 x_list = []
 y_list = []
@@ -78,18 +87,9 @@ for i in range(4):
 
 #calculanr erro maximo para cada ponto, dada as 4 listas
 
-max_error_newton = []
-max_error_lagrange = []
-
-for i in range(len(x_test)):    
-    ref_value = 1/(1 + 25*(x_test[i]**2) ) #valor de referencia
-
-    error_newton = [ math.fabs( ref_value - y_newton[j][i]) for j in range(4)] #calculando erro para os 4 valores de p_n(x), 0<n<4
-    max_error_newton.append( max(error_newton) )
-
-    error_lagrange = [ math.fabs( ref_value - y_lagrange[j][i]) for j in range(4)]
-    max_error_lagrange.append( max(error_lagrange) )
-
+max_error_newton = calc_max_error(y_control,y_newton)
+max_error_lagrange = calc_max_error(y_control,y_lagrange)
+        
 print("ITEM A) \n")
 
 #plotando grafico para metodo de newton
@@ -207,18 +207,8 @@ print('\n')
 
 #calculando e plotando erros
 
-max_error_newton = []
-max_error_lagrange = []
-
-for i in range(len(x_test)):    
-    ref_value = 1/(1 + 25*(x_test[i]**2) ) #valor de referencia
-
-    error_newton = [ math.fabs( ref_value - y_newton[j][i]) for j in range(4)] #calculando erro para os 4 valores de p_n(x), 0<n<4
-    max_error_newton.append( max(error_newton) )
-
-    error_lagrange = [ math.fabs( ref_value - y_lagrange[j][i]) for j in range(4)]
-    max_error_lagrange.append( max(error_lagrange) )
-
+max_error_newton = calc_max_error(y_control,y_newton)
+max_error_lagrange = calc_max_error(y_control,y_lagrange)
 
     #plotando grafico de erro
 plt.title(u"Erros máximos por método.\nUsando pontos de Chebyshev",fontsize=14)
