@@ -124,13 +124,14 @@ int cisao(NO* ptr_no)
         while(i<pai->n_chaves && num_meio>pai->chave[i])
             i++;
         j=i;
-        insercao(num_meio,pai,j);
+        insercao(num_meio,pai,j);       
         for(i=(CONST_D*2 +1);i>j;i--)
         {
             pai->filho[i]=pai->filho[i-1];
         }
         pai->filho[j] = ptr_no;
         pai->filho[j+1] = no_adc;
+        no_adc->pai = pai;
     }
 }
 

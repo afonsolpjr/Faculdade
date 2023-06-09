@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import math
 import numpy
-
+#interpolacao de lagrange
 def lagrange_interpolation(valor_x,lista_x,lista_y):
     num_termos = len(lista_x)
     resultado = 0
@@ -15,7 +15,7 @@ def lagrange_interpolation(valor_x,lista_x,lista_y):
         resultado+=termo
 
     return resultado
-
+#calculo da tabela de diferenças divididas
 def diferencas_divididas(lista_x,lista_y):
     if len(lista_x)!=len(lista_y):
         print("Coloque duas listas com mesmo tamanho.")
@@ -36,7 +36,7 @@ def diferencas_divididas(lista_x,lista_y):
     
     return difdiv
 
-
+#interpolacao de newton
 def newton_interpolation(valor_x,lista_x,lista_y):
     num_termos = len(lista_x)
     resultado = 0
@@ -53,9 +53,10 @@ def newton_interpolation(valor_x,lista_x,lista_y):
 
 #plotando graficos:
 
-x = numpy.linspace(-50,50,50)
-alt_x = numpy.linspace(-50,50,100)  
+x = numpy.linspace(-50,50,50) #dados de entrada
 y = [ i**2 for i in x]
+
+alt_x = numpy.linspace(-50,50,100)  
 alt_y = [i**2 for i in alt_x]    #conjunto alternativo com maior precisao, só para melhor plotagem no gráfico
 x_to_interpolate = [ i+0.53 for i in x]  #criando valores x para serem calculados
 
@@ -73,7 +74,9 @@ plt.grid()
 plt.title(u"Valores e interpolações para y=x² por método",fontsize=14)
 plt.legend(fontsize=10)
 
-
+print("Usando de exemplo a função y = x², abaixo está a construção da interpolação com os dois métodos.\n\n"+
+      "Valores de entrada = 50 pontos, igualmente espaçados no intervalo [-50,50] \n"+
+      "Interpolação para pontos cujo x = x_i+0.53, sendo x_i os valores originais.")
 plt.show()
 
 

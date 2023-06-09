@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import math
 import numpy
-
+#interpolacao de lagrange
 def lagrange_interpolation(valor_x,lista_x,lista_y):
     num_termos = len(lista_x)
     resultado = 0
@@ -16,6 +16,7 @@ def lagrange_interpolation(valor_x,lista_x,lista_y):
 
     return resultado
 
+#calculo de diferencas divididas
 def diferencas_divididas(lista_x,lista_y):
     if len(lista_x)!=len(lista_y):
         print("Coloque duas listas com mesmo tamanho.")
@@ -36,7 +37,7 @@ def diferencas_divididas(lista_x,lista_y):
     
     return difdiv
 
-
+#interpolacao de newton
 def newton_interpolation(valor_x,lista_x,lista_y):
     num_termos = len(lista_x)
     resultado = 0
@@ -54,19 +55,22 @@ def newton_interpolation(valor_x,lista_x,lista_y):
 #funcao que calcula erro maximo dado a lista de valores referencia e valores teste
 def calc_max_error(y_correct,y_test):
     error = []
-    for i in range(len(y_correct)):
-        temp_error_list = [ math.fabs( y_correct[i] - y_test[j][i] ) for j in range(len(y_test))]
+    for i in range(len(y_test)):
+        temp_error_list = [ math.fabs(y_correct[j] - y_test[i][j]) for j in range(len(y_correct))  ]
         error.append(max(temp_error_list))
-    
     return error
 
-#criar lista com 4 listas, cada uma com os pontos a serem utilizados:
-n = [5,10,15,20]
+
+
+# ITEM A)
+
+n_list = [5,10,15,20]
 x_list = []
 y_list = []
 
 i=0
-for n in n:
+#criar lista com 4 listas, cada uma com os pontos a serem utilizados:
+for n in n_list:
     x_list.append( [(-1 + (2*j)/n) for j in range (n)] )
     #obtendo y para a lista de pontos criados:
     y_list.append( [ 1/(1 + (25*(x**2)) ) for x in x_list[i]] )
@@ -89,7 +93,6 @@ for i in range(4):
 
 max_error_newton = calc_max_error(y_control,y_newton)
 max_error_lagrange = calc_max_error(y_control,y_lagrange)
-        
 print("ITEM A) \n")
 
 #plotando grafico para metodo de newton
@@ -128,13 +131,12 @@ print('\n')
 
 
 #plotando grafico de erro
-print("\n Erros por método. Se observarmos bem, o método de Lagrange apresenta erros ligeiramente maiores.")
-plt.title(u"Erros máximos por método",fontsize=14)
+plt.title(u"Erros máximos por nº de pontos e método",fontsize=14)
 
-plt.plot(x_test,max_error_newton,"r",label="por Newton",markersize=2.5)
-plt.plot(x_test,max_error_lagrange,"ko",label="por Lagrange",markersize=2.5)
+plt.plot(n_list,max_error_newton,"-ro",label="por Newton",markersize=2.5)
+plt.plot(n_list,max_error_lagrange,"ko",label="por Lagrange",markersize=2.5)
 
-plt.xlabel('eixo x')
+plt.xlabel('Número de pontos')
 plt.ylabel('Erro')
 plt.grid()
 # plt.ylim([-1,200])
@@ -142,11 +144,10 @@ plt.legend(fontsize=10)
 plt.show()
 print('\n')
 
-
 #ITEM B:
 
 
-
+print("Item b) \nRefazendo as interpolações usando nós de Chebyshev:\n\n")
 n_list = [5,10,15,20]
 cheb_points = []
 y_list = []
@@ -164,7 +165,8 @@ for n in n_list:
 x_test = [ math.cos((i*math.pi + 1)/100) for i in range(100)]
 y_control = [ 1/(1 + (25*(x**2)) ) for x in x_test ]
 
-y_newton = []  #guardará 4 listas para interpolacoes com polinomios de diferentes graus
+#cada lista guardará 4 listas com interpolacoes com polinomios de diferentes graus
+y_newton = [] 
 y_lagrange = []
 for i in range(4):
     y_newton.append( [newton_interpolation(val,cheb_points[i],y_list[i]) for val in x_test ])
@@ -210,17 +212,17 @@ print('\n')
 max_error_newton = calc_max_error(y_control,y_newton)
 max_error_lagrange = calc_max_error(y_control,y_lagrange)
 
-    #plotando grafico de erro
-plt.title(u"Erros máximos por método.\nUsando pontos de Chebyshev",fontsize=14)
+#plotando grafico de erro
+plt.title(u"Erros máximos por nº de pontos e método (nós de Chebyshev)",fontsize=14)
 
-plt.plot(x_test,max_error_newton,"r",label="por Newton",markersize=2.5)
-plt.plot(x_test,max_error_lagrange,"ko",label="por Lagrange",markersize=2.5)
+plt.plot(n_list,max_error_newton,"-ro",label="por Newton",markersize=2.5)
+plt.plot(n_list,max_error_lagrange,"ko",label="por Lagrange",markersize=2.5)
 
-plt.xlabel('eixo x')
+plt.xlabel('Número de pontos')
 plt.ylabel('Erro')
 plt.grid()
 plt.legend(fontsize=10)
 plt.show()
 print('\n')
 
-print("Vemos que o limite do erro é proximo de 1!")
+print("Vemos que o limite do erro com nós de Chebyshev é proximo de 1!")
