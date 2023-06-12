@@ -41,17 +41,23 @@ def diferencas_divididas(lista_x,lista_y):
 #interpolacao de newton
 def newton_interpolation(valor_x,lista_x,lista_y):
     num_termos = len(lista_x)
-    resultado = 0
     dif_div = diferencas_divididas(lista_x,lista_y)
-    t = 0
-
-    for i in range(num_termos-1,0,-1):
-        t += dif_div[i][0]
-        t *= (valor_x - lista_x[i-1])
-    t += dif_div[0][0]
     
+    if(type(valor_x)==type([])):  #caso seja lista a interpolar
+        t = []
+        for x in valor_x:
+            t.append(0)
+            for i in range(num_termos-1,0,-1):
+                t[-1] += dif_div[i][0]
+                t[-1] *= (x - lista_x[i-1])
+            t[-1] += dif_div[0][0]
+    else:  #caso seja só um valor a interpolar
+        t = 0
+        for i in range(num_termos-1,0,-1):
+            t += dif_div[i][0]
+            t *= (valor_x - lista_x[i-1])
+        t += dif_div[0][0]
     return t
-
 
 
 #TAREFA 3 ITEM A)

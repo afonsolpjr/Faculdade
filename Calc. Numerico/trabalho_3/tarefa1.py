@@ -37,17 +37,25 @@ def diferencas_divididas(lista_x,lista_y):
     return difdiv
 
 #interpolacao de newton
+
 def newton_interpolation(valor_x,lista_x,lista_y):
     num_termos = len(lista_x)
-    resultado = 0
     dif_div = diferencas_divididas(lista_x,lista_y)
-    t = 0
-
-    for i in range(num_termos-1,0,-1):
-        t += dif_div[i][0]
-        t *= (valor_x - lista_x[i-1])
-    t += dif_div[0][0]
     
+    if(type(valor_x)==type([])):  #caso seja lista a interpolar
+        t = []
+        for x in valor_x:
+            t.append(0)
+            for i in range(num_termos-1,0,-1):
+                t[-1] += dif_div[i][0]
+                t[-1] *= (x - lista_x[i-1])
+            t[-1] += dif_div[0][0]
+    else:  #caso seja só um valor a interpolar
+        t = 0
+        for i in range(num_termos-1,0,-1):
+            t += dif_div[i][0]
+            t *= (valor_x - lista_x[i-1])
+        t += dif_div[0][0]
     return t
 
 
@@ -61,8 +69,7 @@ alt_y = [i**2 for i in alt_x]    #conjunto alternativo com maior precisao, só p
 x_to_interpolate = [ i+0.53 for i in x]  #criando valores x para serem calculados
 
 lagrange_values = [ lagrange_interpolation(i,x,y) for i in x_to_interpolate]
-newton_values = [ newton_interpolation(i,x,y) for i in x_to_interpolate]
-
+newton_values = newton_interpolation(x_to_interpolate,x,y)
 plt.plot(alt_x,alt_y, "k", label="Valor de referência")
 plt.plot(x_to_interpolate,lagrange_values, "ro", label="interp. por lagrange",markersize=3.5)
 plt.plot(x_to_interpolate,newton_values, "co", label="interp. por newton",markersize=2.5)
