@@ -40,15 +40,22 @@ def diferencas_divididas(lista_x,lista_y):
 #interpolacao de newton
 def newton_interpolation(valor_x,lista_x,lista_y):
     num_termos = len(lista_x)
-    resultado = 0
     dif_div = diferencas_divididas(lista_x,lista_y)
-    t = 0
-
-    for i in range(num_termos-1,0,-1):
-        t += dif_div[i][0]
-        t *= (valor_x - lista_x[i-1])
-    t += dif_div[0][0]
     
+    if(type(valor_x)==type([])):  #caso seja lista a interpolar
+        t = []
+        for x in valor_x:
+            t.append(0)
+            for i in range(num_termos-1,0,-1):
+                t[-1] += dif_div[i][0]
+                t[-1] *= (x - lista_x[i-1])
+            t[-1] += dif_div[0][0]
+    else:  #caso seja só um valor a interpolar
+        t = 0
+        for i in range(num_termos-1,0,-1):
+            t += dif_div[i][0]
+            t *= (valor_x - lista_x[i-1])
+        t += dif_div[0][0]
     return t
 
 
@@ -85,7 +92,7 @@ y_control = [ 1/(1 + (25*(x**2)) ) for x in x_test ]
 y_newton = []  #guardará 4 listas para interpolacoes com polinomios de diferentes graus
 y_lagrange = []
 for i in range(4):
-    y_newton.append ([newton_interpolation(val,x_list[i],y_list[i]) for val in x_test ])
+    y_newton.append( newton_interpolation(x_test,x_list[i],y_list[i]) )
     y_lagrange.append ([lagrange_interpolation(val,x_list[i],y_list[i]) for val in x_test ])
 
 
@@ -169,7 +176,7 @@ y_control = [ 1/(1 + (25*(x**2)) ) for x in x_test ]
 y_newton = [] 
 y_lagrange = []
 for i in range(4):
-    y_newton.append( [newton_interpolation(val,cheb_points[i],y_list[i]) for val in x_test ])
+    y_newton.append( newton_interpolation(x_test,cheb_points[i],y_list[i]))
     y_lagrange.append( [lagrange_interpolation(val,cheb_points[i],y_list[i]) for val in x_test ])
 
 
