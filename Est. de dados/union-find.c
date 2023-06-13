@@ -15,6 +15,7 @@ typedef struct _node
     struct _node *prox;
 
 }NODE;
+
 /* FUNÇÕES DA HEAP MINIMA */
 
 int check_node(ARESTA *heap, int node) // Alterações a fazer caso queira heap max ou min.
@@ -134,14 +135,21 @@ void print_heap(ARESTA *heap, int n)
     
 }
 
-void remover(ARESTA *heap,int alvo,int *n)
+void remover(ARESTA *heap,int *n)  /*retira o primeiro nó*/
 {
-    heap[0] = heap[(*n)-1];
-    descer(heap,0)
+    *n -=1;
+    heap[0] = heap[*n];
+    descer(heap,*n,0);
 
 }
 /* OUTRAS FUNÇÕES */ 
+int getChefe(int *chefe,int v)
+{
+    while(chefe[v]!=v)
+        v = chefe[v];
 
+    return v;
+}
 
 int main()
 {
@@ -155,9 +163,8 @@ int main()
     Seguidos de m linhas, dizendo qual os vértices q a aresta liga e o peso 
     */
 
-    int i,n,m,v1,v2,custo;
+    int i,n,m,*chefe,*altura,contador,chefe1,chefe2;
     ARESTA *arestas,input;
-    NODE *lista_adj;
 
     scanf("%d %d", &n,&m);
 
@@ -165,19 +172,51 @@ int main()
     //lista_adj = (NODE*) calloc(n,sizeof(NODE));
 
     arestas = (ARESTA*) calloc(m,sizeof(ARESTA));
-
+    chefe = (int*)calloc(n,sizeof(int));
+    altura = (int*)calloc(n,sizeof(int));
+    
+    for(i=0;i<n;i++)
+    {
+        chefe[i]=i;
+        altura[i]=0;
+    }
 
     i=0;
+    /* construindo heap min organizado pelo custo das arestas*/
     while(i<m)
     {
-        scanf("%d %d %d",&v1,&v2,&custo);
+        scanf("%d %d %d",&(input.v1),&(input.v2),&(input.custo));
         // printf("\n\t%d %d %d\n", link[0],link[1],custo);
-        input.v1=v1;
-        input.v2=v2;
-        input.custo = custo;
         i++;
         insere(arestas,i,input);
     }
+    
+    contador = 0;
+    while(m>0) //enquanto existir arestas na heap
+    {
+        //checar se a aresta minima é externa 
+        chefe1 = getChefe(chefe,arestas[0].v1);
+        chefe2 = getChefe(chefe,arestas[0].v2);
+        if(chefe1 != chefe2)
+        {
+            //fazer uniao dos conjuntos
+            if(altura[chefe1]>altura[chefe2])
+                chefe[chefe2]=chefe1;
+            else
+            {
+                chefe[chefe1]=chefe2;
+                if(altura[chefe1]==altura[chefe2])
+                    altura[chefe2] = altura[chefe1] + 1;
+            }
+            // somar o peso da aresta analisada ao contador e descartar aresta
+            contador += arestas[0].custo;
+            remover(arestas,&m);
+        }
+        else // descartar aresta
+            remover(arestas,&m);
+        
+
+    } /*e se as arestas dadas nao gerarem uma arvore? */
 
     print_heap(arestas,m);
     // for(i=0;i<m;i++)
