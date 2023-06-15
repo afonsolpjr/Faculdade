@@ -169,7 +169,6 @@ int main()
     scanf("%d %d", &n,&m);
 
     //printf("\nn = %d    m = %d\n",n,m);
-    //lista_adj = (NODE*) calloc(n,sizeof(NODE));
 
     arestas = (ARESTA*) calloc(m,sizeof(ARESTA));
     chefe = (int*)calloc(n,sizeof(int));
@@ -214,20 +213,20 @@ int main()
         }
         else // descartar aresta
             remover(arestas,&m);
-        
-
-    } /*e se as arestas dadas nao gerarem uma arvore? */
-
-    print_heap(arestas,m);
-    // for(i=0;i<m;i++)
-    //     printf("Aresta %d = %d %d %d\n",i,arestas[i].v1, arestas[i].v2,arestas[i].custo);
+    } 
+    /*e se as arestas dadas nao gerarem uma arvore? */
+    printf("%d",contador);
 }
 
 
 /*
-5 4
-0 1 5
+5 6
+0 1 4
 0 2 3
-2 3 1
+1 3 1
+2 3 3
+2 4 4
 4 3 2
+
+
 */
