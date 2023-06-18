@@ -21,7 +21,7 @@ def lagrange_interpolation(valor_x,lista_x,lista_y):
 def diferencas_divididas(lista_x,lista_y):
     if len(lista_x)!=len(lista_y):
         print("Coloque duas listas com mesmo tamanho.")
-        return false
+        return False
     
     n = len(lista_x)
     difdiv = []  #guardará tabela de diferenças divididas
