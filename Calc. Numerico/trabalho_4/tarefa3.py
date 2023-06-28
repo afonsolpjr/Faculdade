@@ -1,10 +1,8 @@
-import numpy;
-import math;
+import math
+import numpy
+import matplotlib.pyplot as plt
 
-# para n = 5 em um intervalo igualmente espaçado em [0,1] usariamos linspace(0,1,6)
 
-# Tarefa 1:
-# Item A)
 def int_trapez_v1(h,f_values):  #Versão que utiliza uma lista de favores de f(x) e a variação h.
     n = len(f_values)
     result = h/2
@@ -65,22 +63,53 @@ def int_simpson_v2(func,a,b,n): #Versão que utiliza a definição da função, 
     return resultado    
 
 
-def funcao(x):
-    return -(x*x)/4
+#Definindo a função interior à integral de Fresnel:
+
+def interior_fresnel(t):
+    return math.cos((t**2)*(math.pi/2))
+
+# Definindo  a integral de fresnel, que recebe, além de x, o numero n.
+
+def fresnel(x):
+    #determinar maior valor da 4ª derivada no intervalo [0,x]
+    if(x<0):
+        x_test = numpy.linspace(x,0,1001)
+    else:
+        x_test = numpy.linspace(0,x,1001)
     
-xl = numpy.linspace(0,7,66)
-print(xl)
-h = xl[1]-xl[0]
-lista_xx = [ -(x*x)/4 for x in xl ]
-print("Valor de h: {:.6f}\nValor da integral: {:.15f}".format(h,int_trapez_v1(h,lista_xx)))
-
-print("\nusando a segunda funcao: {:.15f}".format(int_trapez_v2(funcao,0,7,100)))
+    y_test = [ math.fabs(f4_dx(i)) for i in x_test ]
+    max_val = max(y_test)
     
-print("Regra de simpson: {:.15f}".format(int_simpson_v1(h,lista_xx)))
+    # Determinar o melhor valor de n para erro < 10⁻⁸
+    n = math.fabs((max_val*(x**5)*(10**7))/18)**(1/4)
+    n = (int)(n//1)
 
-print("Regra de simpson 2  par: {:.15f}".format(int_simpson_v2(funcao,0,7,66)))
-print("Regra de simpson 2  impar: {:.15f}".format(int_simpson_v2(funcao,0,7,67)))
+    return int_simpson_v2(interior_fresnel,0,x,n**2)
 
 
 
-    
+#Definindo a 4a derivada da função, para o calculo de M4.
+def f4_dx(x):
+    resultado = 0
+    resultado += -3*((math.pi)**2)*(math.cos((1/2)*math.pi*(x**2)))
+    resultado += 6*(math.pi**3)*(x**2)*(math.sin((1/2)*math.pi*(x**2))) 
+    resultado += (math.pi**4)*(x**4)*(math.cos((1/2)*math.pi*(x**2)))
+    return resultado
+
+
+
+
+x_values = [-2,0.5,1,5]
+f_values = [fresnel(i) for i in x_values]
+error = []
+error.append( math.fabs( -0.48825340607534075450 - f_values[0]) )
+error.append( math.fabs( 0.49234422587144639288 - f_values[1]) )
+error.append( math.fabs( 0.77989340037682282947 - f_values[2]) )
+error.append( math.fabs( 0.56363118870401223110 - f_values[3]) )
+val_string  = [ str(i) for i in x_values]
+
+plt.title("Erro absoluto para C(x) para x = [-2,0.5,1,5]")
+plt.xlabel("Valor de x")
+plt.ylabel("Erro para C(x)")
+plt.plot(x_values,error, "k.",linestyle='dotted')
+plt.show()
