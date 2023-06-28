@@ -1,10 +1,8 @@
+import math
 import numpy;
 import math;
 
-# para n = 5 em um intervalo igualmente espaçado em [0,1] usariamos linspace(0,1,6)
 
-# Tarefa 1:
-# Item A)
 def int_trapez_v1(h,f_values):  #Versão que utiliza uma lista de favores de f(x) e a variação h.
     n = len(f_values)
     result = h/2
@@ -46,7 +44,6 @@ def int_simpson_v1(h,f_val):   #Versão que utiliza uma lista de favores de f(x)
     resultado*=sum
     return resultado
 
-
 def int_simpson_v2(func,a,b,n): #Versão que utiliza a definição da função, os limites de integração e o numero de nós.
     x_list = numpy.linspace(a,b,n+1)
     f_val = [ func(i) for i in x_list]
@@ -68,22 +65,14 @@ def int_simpson_v2(func,a,b,n): #Versão que utiliza a definição da função, 
     return resultado    
 
 
+
+    
+
+
 def funcao(x):
-    return -(x*x)/4
-    
-xl = numpy.linspace(0,7,66)
-print(xl)
-h = xl[1]-xl[0]
-lista_xx = [ -(x*x)/4 for x in xl ]
-print("Valor de h: {:.6f}\nValor da integral: {:.15f}".format(h,int_trapez_v1(h,lista_xx)))
+    return (math.cos(x)**2)
 
-print("\nusando a segunda funcao: {:.15f}".format(int_trapez_v2(funcao,0,7,100)))
-    
-print("Regra de simpson: {:.15f}".format(int_simpson_v1(h,lista_xx)))
-
-print("Regra de simpson 2  par: {:.15f}".format(int_simpson_v2(funcao,0,7,66)))
-print("Regra de simpson 2  impar: {:.15f}".format(int_simpson_v2(funcao,0,7,67)))
+n_list = [10,50,100,200]
 
 
 
-    
