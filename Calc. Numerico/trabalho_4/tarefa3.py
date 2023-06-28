@@ -106,7 +106,6 @@ error.append( math.fabs( -0.48825340607534075450 - f_values[0]) )
 error.append( math.fabs( 0.49234422587144639288 - f_values[1]) )
 error.append( math.fabs( 0.77989340037682282947 - f_values[2]) )
 error.append( math.fabs( 0.56363118870401223110 - f_values[3]) )
-val_string  = [ str(i) for i in x_values]
 
 plt.title("Erro absoluto para C(x) para x = [-2,0.5,1,5]")
 plt.xlabel("Valor de x")
