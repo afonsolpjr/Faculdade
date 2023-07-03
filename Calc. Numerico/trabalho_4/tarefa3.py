@@ -68,7 +68,7 @@ def int_simpson_v2(func,a,b,n): #Versão que utiliza a definição da função, 
 def interior_fresnel(t):
     return math.cos((t**2)*(math.pi/2))
 
-# Definindo  a integral de fresnel, que recebe, além de x, o numero n.
+# Definindo  a integral de fresnel.
 
 def fresnel(x):
     #determinar maior valor da 4ª derivada no intervalo [0,x]
@@ -88,7 +88,7 @@ def fresnel(x):
 
 
 
-#Definindo a 4a derivada da função, para o calculo de M4.
+#Definindo a 4a derivada da função, para o calculo de M_4.
 def f4_dx(x):
     resultado = 0
     resultado += -3*((math.pi)**2)*(math.cos((1/2)*math.pi*(x**2)))
