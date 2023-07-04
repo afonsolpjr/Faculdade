@@ -2,6 +2,31 @@
 #include <stdlib.h>
 
 #define STR_SIZE 100
+/* ler um arquivo com o seguinte formato:
+
+8
+0.0.0.0/0 N/A
+146.164.0.0/16 UFRJ
+146.164.3.7/32 acd.ufrj.br
+146.164.40.0/23 DCC-UFRJ
+146.164.41.220/32 Maquina do Claudson
+3.0.0.0/8 GE
+18.72.0.3/32  name server: bitsy.mit.edu
+18.62.0.0/24 eecs.mit
+
+146.164.3.8
+146.164.41.210
+5.0.1.2
+
+A primeira linha indica o numero de linhas com blocos que se seguem. Estas linhas tem 1 bloco cidr, espaco, e informacoes sobre o bloco.
+Para cada um dos ips que se seguem, o programa deve imprimir a informacao mais especifica disponivel para aquele bloco. Deve ser implementado com uma arvore digital ou patricia.
+
+A saida, para este exemplo, acho que seria:
+
+146.164.3.8 UFRJ
+146.164.41.210 DCC-UFR
+5.0.1.2 N/A
+*/
 
 /* Definição de um endereço e função para ler a linha */
 typedef struct _endereco
@@ -214,28 +239,28 @@ void adicionar(NO* arvore, ENDERECO *endereco, int mascara)
     arvore->endereco=endereco;
 }
 
-/* (fins de debug) função pra imprimir numero em forma de binario. */
-void printb(long int n)
-{
-    long int i,c;
-    for(i=31;i>=0;i--)
-    {
-        if(n & (1<<i))
-        {
-            c=i;
-            break;
-        }
-    }
-    putchar('\n');
-    for(i=c;i>=0;i--)
-    {
-        if(n & (1<<i))
-            putchar('1');
-        else
-            putchar('0');
-    }
-    putchar('\n');
-}
+/* (fins de debug) função pra imprimir numero em binario. */
+// void printb(long int n)
+// {
+//     long int i,c;
+//     for(i=31;i>=0;i--)
+//     {
+//         if(n & (1<<i))
+//         {
+//             c=i;
+//             break;
+//         }
+//     }
+//     putchar('\n');
+//     for(i=c;i>=0;i--)
+//     {
+//         if(n & (1<<i))
+//             putchar('1');
+//         else
+//             putchar('0');
+//     }
+//     putchar('\n');
+// }
 
 int main()
 {
