@@ -10,11 +10,11 @@ typedef struct _NO
 }NO;
 
 
-int buscar(NO *arvore,long int n)
+int buscar(NO *arvore,long int n, int *nivel_busca, NO **ultimo_no)
 {
     int i;
 
-    /* obtendo tamanho */
+    /* obtendo tamanho da palavra */
     for(i=31;i>=0;i--)
     {
         if(n & (1<<i))
@@ -28,14 +28,15 @@ int buscar(NO *arvore,long int n)
             if(arvore->dir!=NULL)
                 arvore=arvore->dir;
             else
-                return 0;
+                break;
         }
         else // se bit = 0
         {
             if(arvore->esq!=NULL)
                 arvore=arvore->esq;
             else
-                return 0;
+                break;
+        
         }
         // printf("tem o %d bit!\n",32-i);
     }
@@ -43,19 +44,23 @@ int buscar(NO *arvore,long int n)
     if(arvore->chave==n) // chegou, mas tem a info?
         return 1;
     else
+    {
+        *nivel_busca=i;
+        *ultimo_no=arvore;    
         return 0;
+    }
 }
 
-void adicionar(NO* arvore, int n)
+void adicionar(NO* arvore, int n,int pos_inicio)
 {
     int i;
-    /* obtendo tamanho */
-    for(i=31;i>=0;i--)
-    {
-        if(n & (1<<i))
-            break;
-    }
-
+    // /* obtendo tamanho */
+    // for(i=31;i>=0;i--)
+    // {
+    //     if(n & (1<<i))
+    //         break;
+    // }
+    i=pos_inicio;
     for(;i>=0;i--)
     {
         if( n & (1<<i) )
@@ -90,9 +95,9 @@ void adicionar(NO* arvore, int n)
 int main()
 {
     long int num;
-    int opcao=-1;
+    int opcao=-1,nivel_busca;
 
-    NO* arvore;
+    NO *arvore,*ultimo_no_busca;
 
 
     /* alocando arvore */
@@ -101,8 +106,8 @@ int main()
     arvore->dir=NULL;
     arvore->esq=NULL;
     arvore->chave=-1;
+    ultimo_no_busca=arvore;
 
-   
     while(opcao!=0)
     {
          printf("\n\tEscolha:"
@@ -121,16 +126,16 @@ int main()
         case 1:
             puts("\n Inserir : ");
             scanf("%ld",&num);
-            if(buscar(arvore,num))
+            if(buscar(arvore,num,&nivel_busca,&ultimo_no_busca))
                 puts("\n\tNumero ja esta na arvore!!\n");
             else
-                adicionar(arvore,num);
+                adicionar(ultimo_no_busca,num,nivel_busca);
             break;
         
         case 2:
             puts("\n Buscar: ");
             scanf("%ld",&num);
-            if(buscar(arvore,num))
+            if(buscar(arvore,num,&nivel_busca,&ultimo_no_busca))
                 puts("\n\tNumero esta na arvore!!\n");
             else
                 puts("\n\tNao esta na arvore!!");
