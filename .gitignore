@@ -7,3 +7,4 @@ teste.exe
 *.zip
 *.exe
 local/
+__pycache__/
