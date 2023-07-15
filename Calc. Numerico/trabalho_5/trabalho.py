@@ -160,3 +160,46 @@ pyplot.show()
 
 
 ##############   TAREFA 3 ###################
+
+# testando funções de vetores do numpy
+# vetor = numpy.array([1,2])
+# vetor *= 2
+# vetor += numpy.array([2,3])
+# print(vetor)
+
+def dsdt_vetorial(x,y_n):
+    s = y_n[0]
+    i = y_n[1]
+    ds =  (-0.0003*s*i + 0.15*i)
+    vetor = numpy.array([ds,-ds])
+    return vetor
+
+#começando com 21 passos e aumentando até os incrementos não mudarem mais que 0.05
+y0 = numpy.array([10000,1])    
+i=t=21
+valores_antigo = metodo_rk4(dsdt_vetorial,0,t,y0,i)
+i+=1
+valores = metodo_rk4(dsdt_vetorial,0,21,y0,i)
+variacao = math.fabs(valores[-1][0] - valores_antigo[-1][0])
+    
+while( variacao >=0.05 ):
+    i+=1
+    valores_antigo = valores
+    valores = metodo_rk4(dsdt_vetorial,0,t,y0,i)
+    variacao = math.fabs(valores[-1][0] - valores_antigo[-1][0])
+
+
+suscetiveis = [ par[0] for par in valores]
+infectados = [ par[1] for par in valores]
+
+
+pyplot.title("Suscetiveis e infectados por dia")
+pyplot.xlabel("Dia")
+pyplot.ylabel("Quantidade de pessoas")
+pyplot.plot(numpy.linspace(0,21,i+1),suscetiveis,"k",label="Suscetíveis",markersize=3)
+pyplot.plot(numpy.linspace(0,21,i+1),infectados,"r",label="Infectados",markersize=3)
+pyplot.legend(fontsize=9)
+pyplot.text(15,8150,"Infectados no dia 21:\n{}".format(valores[-1][1]))
+pyplot.text(15,1600,"Suscetiveis no dia 21:\n{}".format(valores[-1][0]))
+pyplot.text(6,5200,"Numero de passos: {}".format(i))
+pyplot.show()
