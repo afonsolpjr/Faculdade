@@ -143,12 +143,13 @@ void remover(ARESTA *heap,int *n)  /*retira o primeiro nó*/
 
 }
 /* OUTRAS FUNÇÕES */ 
-int getChefe(int *chefe,int v)
-{
-    while(chefe[v]!=v)
-        v = chefe[v];
 
-    return v;
+int getChefe(int *chefe,int v) // com compressão de
+{
+    if(chefe[v]!=v)
+        chefe[v] = getChefe(chefe,chefe[v]);
+
+    return chefe[v];
 }
 
 int main()
@@ -227,6 +228,10 @@ int main()
 2 3 3
 2 4 4
 4 3 2
+
+saida esperada: 9
+
+
 
 
 */
