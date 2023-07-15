@@ -144,7 +144,7 @@ void remover(ARESTA *heap,int *n)  /*retira o primeiro nó*/
 }
 /* OUTRAS FUNÇÕES */ 
 
-int getChefe(int *chefe,int v) // com compressão de
+int getChefe(int *chefe,int v) // com compressão de caminhos 
 {
     if(chefe[v]!=v)
         chefe[v] = getChefe(chefe,chefe[v]);
