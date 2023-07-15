@@ -199,8 +199,9 @@ int buscar(NO *arvore,long int n, NO** ultimo_com_info)
     }
 }
 
-
-
+/*
+Adiciona a NO* 'arvore' o endereço 'endereco', com a mascara 'mascara'
+*/
 void adicionar(NO* arvore, ENDERECO *endereco, int mascara)
 {
     int i,j;
