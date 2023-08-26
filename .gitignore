@@ -8,3 +8,4 @@ teste.exe
 *.exe
 local/
 __pycache__/
+cocada/.ipynb_checkpoints
