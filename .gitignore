@@ -9,3 +9,6 @@ teste.exe
 local/
 __pycache__/
 cocada/.ipynb_checkpoints
+ipynb_checkpoints/
+*.out
+bancodados/202*
