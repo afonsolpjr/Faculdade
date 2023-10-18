@@ -1,12 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <string.h>
 
 /* Recebe nome de arquivo csv como argumento */
 
 #define BASE_LINE_LENGTH 370
+#define BASE_ATTRIBUTE_LENGTH 8
 #define BASE_COLLUMN_LENGTH 80
-#define LIMITE_LISTA 10000
+#define LIMITE_LISTA 9000000
 
 /*define estrutura de uma linha do csv pra ser um nó em uma lista*/
 typedef struct _remuneracao
@@ -76,8 +77,8 @@ char* get_linha(FILE *ptr_arquivo)
 char** get_colunas(char* linha, int *n)
 {
     char **colunas;
-    int i,i_coluna,num_coluna,col_char;
-    
+    int i,i_coluna,num_coluna,col_char,tam_aloc,retira_espaco;
+    retira_espaco = 0;
     num_coluna = *n;
     if(!num_coluna)
     {
@@ -89,12 +90,16 @@ char** get_colunas(char* linha, int *n)
         num_coluna++;
         *n = num_coluna;
         printf("li %d colunas\n ",num_coluna);
+        retira_espaco = 1;
     }
 
     colunas = (char**) calloc(num_coluna,sizeof(char*));
+
+    // alocando tamanho de atributos
+    tam_aloc = BASE_ATTRIBUTE_LENGTH;
     for(i=0;i<num_coluna;i++)
     {
-        colunas[i] = (char*) calloc(BASE_LINE_LENGTH,sizeof(char));
+        colunas[i] = (char*) calloc(tam_aloc,sizeof(char));
     }
 
     i=0;
@@ -105,12 +110,27 @@ char** get_colunas(char* linha, int *n)
 
         if(linha[i]!='\"' && linha[i]!=';')
         {
-            colunas[i_coluna][col_char++] = linha[i];
+            // Dobra tamanho da alocação padrão para atributos, se precisar
+            if(col_char==tam_aloc)
+            {
+                tam_aloc*=2;
+                colunas[i_coluna] = (char*) realloc(colunas[i_coluna],tam_aloc*sizeof(char));
+            }
+            
+            colunas[i_coluna][col_char] = linha[i];
+            if( retira_espaco &&   
+                (colunas[i_coluna][col_char]== ' ' || 
+                colunas[i_coluna][col_char] == '(') ||
+                colunas[i_coluna][col_char] == ')' ||
+                colunas[i_coluna][col_char] == '-') 
+                colunas[i_coluna][col_char]='_';
+            col_char++;
         }
         else if(linha[i]==';')
         {
             i_coluna++;
             col_char = 0;
+            tam_aloc = BASE_ATTRIBUTE_LENGTH;
         }
         i++;
     }
@@ -131,11 +151,39 @@ int tam_linha(FILE *ptr_arquivo)
 }
 
 
+void create_query(REMUNERACAO *head,char *nome_db, char *nome_tabela,int tam_atr,int n_col)
+{
+    FILE *ptr_arquivo;
+    int i,cnt;
+
+    ptr_arquivo = fopen("query.txt","w");
+
+    fputs("USE ",ptr_arquivo);
+    fputs(nome_db,ptr_arquivo);
+    fputs(";\n",ptr_arquivo);
+
+    fputs("CREATE TABLE ",ptr_arquivo);
+    fprintf(ptr_arquivo,"%s (",nome_tabela);
+    for(i=0;i<n_col;i++)
+    {
+        if(i!=n_col-1)
+            fprintf(ptr_arquivo,"\n%s VARCHAR(%d),",head->nome_colunas[i],tam_atr);
+        else
+            fprintf(ptr_arquivo,"\n%s VARCHAR(%d) );",head->nome_colunas[i],tam_atr);
+    }
+
+    fclose(ptr_arquivo);
+
+
+    return;
+}
+
+
 int main(int argc, char *argv[]) 
 {
     FILE *ptr_arquivo;
     char *linha,**nome_colunas,**dados;
-    int i,j,n_colunas,contador_linha;
+    int i,j,n_colunas,contador_linha,max;
     REMUNERACAO *lista,*no;
 
     ptr_arquivo = fopen(argv[1],"r");
@@ -165,16 +213,24 @@ int main(int argc, char *argv[])
     fclose(ptr_arquivo);
 
     no = lista;
+    max =0;
     for(i=0;;i++)
     {
         if(no!=NULL)
         {
-            printf("NOME[%d] - %s\n",i,no->dados[4]);
+            for(j=0;j<n_colunas;j++)
+            {
+
+                strlen(no->dados[j]) > max? max = strlen(no->dados[j]): 0;  
+            }
             no=no->prox;
             continue;
         }
         else
             break;
     }
+    printf("tamanho maximo de um atributo = %d",max);
+
+    create_query(lista,argv[2],argv[3],max,n_colunas);
     return 0;
 }
