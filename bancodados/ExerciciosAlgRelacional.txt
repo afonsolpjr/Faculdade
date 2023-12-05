@@ -1,126 +1,43 @@
-# exercicio extra 1
-π Dnr(σ totalSalario<100000 (gamma Dnr;sum(Salario)→totalSalario (sigma Salario>25000 Funcionario) ))
 
-# exercicio extra 2
+/* Exercicio 1 
+FUNC_SUP = Funcionario left outer join Funcionario.Cpf_Supervisor = Supervisor.Cpf (rho Supervisor Funcionario)
+RESULTADO = sigma Supervisor.Cpf=null ∨ Funcionario.Dnr ≠ Supervisor.Dnr FUNC_SUP
+RESULTADO */
 
-gamma Cpf;count(Dependente.Nome_dependente)→ resultado (pi Pnome,Cpf Funcionario⟕Cpf=Fcpf Dependente)
-
-exercicio 1 da lista
-
-FUNC_SUPER = Funcionario ⟕Funcionario.Cpf_Supervisor = Supervisor.Cpf (ρ Supervisor Funcionario) 
-SELECAO = sigma Funcionario.Dnr != Supervisor.Dnr FUNC_SUPER
-RESULTADO = pi Funcionario.Pnome, Funcionario.Minicial, Funcionario.Unome SELECAO
-RESULTADO
-
-EXERCICIO 2
-
-
-FUNC_TRAB = Funcionario⨝Cpf=Fcpf Trabalha_em
-FUNC_PJ = FUNC_TRAB⨝Trabalha_em.Pnr=Projeto.Projnumero Projeto
-F_PY = pi Pnome,Minicial,Unome(sigma Projeto.Projnome='ProdutoY' FUNC_PJ)
-F_PX = pi Pnome,Minicial,Unome(sigma Projeto.Projnome='ProdutoX' FUNC_PJ)
-F_P1 = F_PY ∩ F_PX
-F_PInfo = pi Pnome,Minicial,Unome(sigma Projeto.Projnome= 'Informatizacao' FUNC_PJ)
-F_PORG = pi Pnome,Minicial,Unome(sigma Projeto.Projnome='Reorganizacao' FUNC_PJ)
-F_P2 = F_PInfo - F_PORG
-RESULTADO = F_P1∪F_P2
-RESULTADO
+/*Exercicio 2
+Listar o nome de todos os funcionários que trabalharam
+nos projetos 'ProdutoX' e 'ProdutoY', mas não no
+'ProdutoZ', ou que trabalharam no projeto
+'Informatizacao' mas não no 'Reorganizacao'
+DICA: executar operaçõesrecorrentes uma única vez e
+reaproveitaro resultado 
+FUNC_PNR = Funcionario join Cpf=Fcpf Trabalha_em
+FUNC_PNOME = pi Pnome,Minicial,Unome,Projnome(FUNC_PNR join Pnr=Projnumero Projeto)
 
 
 
+FUNC_XY = FUNC_PNOME ÷ (pi Projnome(sigma Projnome='ProdutoX' ∨ Projnome='ProdutoY' Projeto))
 
+FUNC_Z = FUNC_PNOME ÷ (pi Projnome(sigma Projnome='ProdutoZ' Projeto))
 
+R1 = FUNC_XY - FUNC_Z
 
+FUNC_INFO = FUNC_PNOME ÷ (pi Projnome(sigma Projnome='Informatizacao'  Projeto))
 
+FUNC_REORG = FUNC_PNOME ÷ (pi Projnome(sigma Projnome='Reorganizacao'  Projeto))
 
+R2 = FUNC_INFO - FUNC_REORG
 
+RESULTADO = R1∪R2
+RESULTADO */
 
+/* Exercicio 3
+Encontrar o nome do departamento onde os funcionários
+ganham um salário médio maior que o salário médio do
+departamento 5 
 
-
-
-
-
-
-
-
-
-bd:
-
-group:EMPRESA (imported from SQL)
-
-Funcionario = {
-	Pnome:string, Minicial:string, Unome:string, Cpf:string, Datanasc:string, Endereco:string, Sexo:string, Salario:number, Cpf_Supervisor:string, Dnr:number
-
-'Jorge','E','Brito','88866555576','1937-11-10','Rua do Horto, 35, Sao Paulo, SP','M',55000,NULL,1
-'Fernando','T','Wong','33344555587','1955-12-08','Rua da Lapa, 34, Sao Paulo, SP','M',40000,'88866555576',5
-'Jennifer','S','Souza','98765432168','1941-06-20','Av. Arthur de Lima, 54, Santo Andre, SP','F',43000,'88866555576',4
-'Joao','B','Silva','12345678966','1965-01-09','Rua das Flores, 751, Sao Paulo, SP','M',30000,'33344555587',5
-'Alice','J','Zelaya','99988777767','1968-01-19','Rua Souza Lima, 35, Curitiba, PR','F',25000,'98765432168',4
-'Ronaldo','K','Lima','66688444476','1962-09-15','Rua Rebouças, 65, Piracicaba, SP','M',38000,'33344555587',5
-'Joice','A','Leite','45345345376','1972-07-31','Av. Lucas Obes, 74, Sao Paulo, SP','F',25000,'33344555587',5
-'Andre','V','Pereira','98798798733','1969-03-29','Rua Timbira, 35, Sao Paulo, SP','M',25000,'98765432168',4
-}
-
-Departamento = {
-	Dnome:string, Dnumero:number, Cpf_gerente:string, Data_inicio_gerente:string
-
-'Pesquisa', 5, '33344555587','1988-05-22'
-'Administracao', 4, '98765432168','1995-01-01'
-'Matriz', 1, '88866555576','1981-06-19'
-}
-
-Localizacao_Dep = {
-	Dnumero:number, Dlocal:string
-
-1,'Sao Paulo'
-4,'Maua'
-5,'Santo Andre'
-5,'Itu'
-5,'Sao Paulo'
-}
-
-Projeto = {
-	Projnome:string, Projnumero:number, Projlocal:string, Dnum:number
-
-'ProdutoX',1,'Santo Andre',5
-'ProdutoY',2,'Itu',5
-'ProdutoZ',3,'Sao Paulo',5
-'Informatizacao',10,'Maua',4
-'Reorganizacao',20,'Sao Paulo',1
-'Novosbeneficios',30,'Maua',4
-}
-
-Trabalha_em = {
-	Fcpf:string, Pnr:number, Horas:number
-
-'12345678966',1,30.5
-'12345678966',2,7.5
-'12345678966',3,2
-'66688444476',3,40
-'45345345376',1,20
-'45345345376',2,20
-'33344555587',2,10
-'33344555587',3,10
-'33344555587',10,10
-'33344555587',20,10
-'99988777767',30,30
-'99988777767',10,10
-'98798798733',10,35
-'98798798733',30,5
-'98765432168',30,20
-'98765432168',20,15
-'88866555576',20,NULL
-}
-
-Dependente = {
-	Fcpf:string, Nome_dependente:string, Sexo:string, Datanasc:string, Parentesco:string
-
-'33344555587','Alicia','F','1986-04-05','Filha'
-'33344555587','Tiago','M','1983-10-25','Filho'
-'33344555587','Janaina','F','1958-05-03','Esposa'
-'98765432168','Antonio','M','1942-02-28','Marido'
-'12345678966','Michael','M','1988-01-04','Filho'
-'12345678966','Alicia','F','1988-12-30','Filha'
-'12345678966','Elizabeth','F','1967-05-05','Esposa'
-}
-
+SAL_MED_DEPS = (gamma Dnr;avg(Salario)->Salario_medio Funcionario)
+SAL_MED5 = rho dep5 (rho SalMdep5<-Salario_medio (sigma Dnr=5 SAL_MED_DEPS))
+NUM_DEP_FINAL = pi Funcionario.Dnr (SAL_MED_DEPS join Salario_medio>dep5.SalMdep5 SAL_MED5)
+RESULTADO = pi Dnome (NUM_DEP_FINAL join Dnr=Dnumero Departamento)
+RESULTADO */
