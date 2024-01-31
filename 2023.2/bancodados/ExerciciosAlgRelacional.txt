@@ -1,0 +1,43 @@
+
+/* Exercicio 1 
+FUNC_SUP = Funcionario left outer join Funcionario.Cpf_Supervisor = Supervisor.Cpf (rho Supervisor Funcionario)
+RESULTADO = sigma Supervisor.Cpf=null ∨ Funcionario.Dnr ≠ Supervisor.Dnr FUNC_SUP
+RESULTADO */
+
+/*Exercicio 2
+Listar o nome de todos os funcionários que trabalharam
+nos projetos 'ProdutoX' e 'ProdutoY', mas não no
+'ProdutoZ', ou que trabalharam no projeto
+'Informatizacao' mas não no 'Reorganizacao'
+DICA: executar operaçõesrecorrentes uma única vez e
+reaproveitaro resultado 
+FUNC_PNR = Funcionario join Cpf=Fcpf Trabalha_em
+FUNC_PNOME = pi Pnome,Minicial,Unome,Projnome(FUNC_PNR join Pnr=Projnumero Projeto)
+
+
+
+FUNC_XY = FUNC_PNOME ÷ (pi Projnome(sigma Projnome='ProdutoX' ∨ Projnome='ProdutoY' Projeto))
+
+FUNC_Z = FUNC_PNOME ÷ (pi Projnome(sigma Projnome='ProdutoZ' Projeto))
+
+R1 = FUNC_XY - FUNC_Z
+
+FUNC_INFO = FUNC_PNOME ÷ (pi Projnome(sigma Projnome='Informatizacao'  Projeto))
+
+FUNC_REORG = FUNC_PNOME ÷ (pi Projnome(sigma Projnome='Reorganizacao'  Projeto))
+
+R2 = FUNC_INFO - FUNC_REORG
+
+RESULTADO = R1∪R2
+RESULTADO */
+
+/* Exercicio 3
+Encontrar o nome do departamento onde os funcionários
+ganham um salário médio maior que o salário médio do
+departamento 5 
+
+SAL_MED_DEPS = (gamma Dnr;avg(Salario)->Salario_medio Funcionario)
+SAL_MED5 = rho dep5 (rho SalMdep5<-Salario_medio (sigma Dnr=5 SAL_MED_DEPS))
+NUM_DEP_FINAL = pi Funcionario.Dnr (SAL_MED_DEPS join Salario_medio>dep5.SalMdep5 SAL_MED5)
+RESULTADO = pi Dnome (NUM_DEP_FINAL join Dnr=Dnumero Departamento)
+RESULTADO */
