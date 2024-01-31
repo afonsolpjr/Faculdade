@@ -1,3 +1,4 @@
+# Tipos de arquivo gerais a serem ignorados
 **/a.exe
 teste.cpp
 /a.out
@@ -6,12 +7,17 @@ teste
 teste.exe
 *.zip
 *.exe
-local/
-__pycache__/
-cocada/.ipynb_checkpoints
-ipynb_checkpoints/
 *.out
+
+# Pastas a serem ignoradas
+__pycache__/
+*ipynb_checkpoints/
 bancodados/202*
 WebDev Course/0.*
-WebDev Course/3.MultiPages/Images
-2023.2/bancodados/202301_*
+WebDev Course/3.MultiPages/Image
+
+#Ignorando arquivos CSV do portal da transparência
+202301_Servidores_SIAPE/
+
+#Ignoring files from the WebDev course exercises.
+*wbdv_ex/
