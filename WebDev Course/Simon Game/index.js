@@ -40,6 +40,7 @@ function gameOver(){
     lvl_indicator.innerText="Game Over! Press a Key to Start!";
     waitForStart();
 }
+
 function waitForStart(){
     document.addEventListener("keydown",startGame);
 }
@@ -121,7 +122,7 @@ function keyPressed(event){
 
 
 
-/* These functions was supposed to enable user input at the right times. But since settimeout is asynchronous, i did not came up with an alternative to achieve this. */
+/* These functions were supposed to enable/disable user input at the right times. But since settimeout is asynchronous, went wrong. And i did not came up with an alternative to achieve this (yet?). */
 function waitForPlayer(){
     for(var i=0;i<4;i++)
     {
