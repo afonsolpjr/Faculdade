@@ -8,6 +8,8 @@ teste.exe
 *.zip
 *.exe
 *.out
+ModMat/*.gif
+ModMat/*.png
 
 # Pastas a serem ignoradas
 __pycache__/
