@@ -4,13 +4,8 @@
 #include <ctype.h>
 #include <string.h>
 
-
-
 char c;
 
-
-/* todo:
-    -consertar erro dos allocs */
 typedef struct _token
 {
     char *token;
@@ -19,11 +14,10 @@ typedef struct _token
 
     /* numero, nome, simbolos, espaços, comentarios ou palavras reservadas*/
     char name_type[19];
-    int type;
+    int type; // 1 = nome ou num, 2,3= simbolo ou palavra reservada
 } token;
 
-
-
+/* inicializa uma estrutura de token */
 token* init_token()
 {
     token *new_token;
@@ -31,18 +25,19 @@ token* init_token()
     if((new_token = malloc(sizeof(token)))==NULL)
     {
         puts("erro na alocação de memória");
+        return NULL;
     }
     new_token->token_length=16;
     
     if((new_token->token = calloc(new_token->token_length,sizeof(char))) ==NULL)
     {
         puts("erro na alocação de memória");
+        return NULL;
     }
     return new_token;
 }
 
-
-/* aumenta tamanho da string token*/
+/* aumenta tamanho da string do token enviado como parâmetro */
 void expand_string(token* token)
 {
     char *new_str;
@@ -50,11 +45,8 @@ void expand_string(token* token)
     token->token_length = token->token_length*2;
     if(( new_str = realloc(token->token,token->token_length))==NULL)
     {
-        puts("erro na alocação de memória");
+        puts("Erro na alocação de memória");
     }
-
-    if(new_str!=token->token)
-        free(token->token);
     
     token->token = new_str;
 
@@ -65,26 +57,23 @@ void expand_string(token* token)
     }
 }
 
-
-
 void consume(token *token)
 {
     int i=0;
     /*procurar posicao pra inserir c */
-    while( (i < token->token_length) && token->token[i]!='\0')
+    while( (i < token->token_length-1) && token->token[i]!='\0')
         i++;
 
     
     /* aumentar array se necessario*/
-    if(i==token->token_length)
+    if(i == token->token_length-1)
         expand_string(token);
 
     token->token[i]=c;
     c = getchar();
 }
 
-/* 
-# Símbolos
+/*Símbolos
 Categoria:  + - * / % ( ) [ ] { } , ; =
 Valor:      Não há */
 int issymbol(char ch)
@@ -111,12 +100,13 @@ int issymbol(char ch)
     }
 }
 
-
+/* regras de tokenização */
 token* next_token()
 {
     token *new_token;
     new_token = init_token();
 
+    /* cespaço */
     if (isspace(c))
     {
         strcpy(new_token->token," ");
@@ -126,108 +116,115 @@ token* next_token()
         return new_token;
     }
 
-    // /* caso seja numero */
+    /* numero */
     if(isdigit(c))
     {
         while(isdigit(c))
             consume(new_token);
         
-        strcpy(new_token->name_type,"NUMERO");
+        strcpy(new_token->name_type,"NUM");
         new_token->type=1;
         return new_token;
     }
 
-    // /*checando se é nome e então se é palavra reservada*/
-    // if(isalpha(peek(0))){
+    /*checando se é nome e então se é palavra reservada*/
+    if(isalpha(c)){
 
-    //     /*not a reserved word*/
-    //     i=0;
-    //     while(isalnum(peek(i)))
-    //     {
-    //         new_token.token[i]=peek(i);
-    //         i++;
-    //     }
-    //     new_token.token[i]='\0';
-    //     /* checar se é palavra reservada*/
+        while(isalnum(c))
+            consume(new_token);
         
-    //     strcpy(new_token.name_type,"NOME");
-    //     consume(i);
-
-    //     /*checking reserved words*/
-
-    //     if(strcmp(new_token.token,"if")==0)
-    //     {
-    //         strcpy(new_token.name_type,"PALAVRA RESERVADA");
-    //     }
-    //     else if(strcmp(new_token.token,"else")==0)
-    //     {
-    //         strcpy(new_token.name_type,"PALAVRA RESERVADA");
-    //     }
-    //     else if(strcmp(new_token.token,"while")==0)
-    //     {
-    //         strcpy(new_token.name_type,"PALAVRA RESERVADA");
-    //     }
-    //     else
-    //         strcpy(new_token.name_type,"NOME");
+        /* checar se é palavra reservada*/
+        switch(strcmp(new_token->token,"if")==0
+            || strcmp(new_token->token,"while")==0
+            || strcmp(new_token->token,"else")==0)
+        {
+        case 1:
+            strcpy(new_token->name_type,"PALAVRA RESERVADA");
+            new_token->type=3;
+            break;
+        default:
+            strcpy(new_token->name_type,"NOME");
+            new_token->type=1;
+        }
+        return new_token;
+    }
     
-    //     new_token.type=1;
-    //     return new_token;
-    // }
-    
-    // /*checando se é comentario*/
-    // if(peek_str(str,2))
-    // {   
-    //     if(strcmp(str,"/*")==0)
-    //     {
 
-    //         consume(2);
-    //         i=0;
-    //         while(ind<(buffer_length-1))
-    //         {
-    //             peek_str(str,2);
-    //             if(strcmp(str,"*/")==0)
-    //             {
-    //                 strcpy(new_token.token," ");
-    //                 strcpy(new_token.name_type,"COMENTARIO");
-    //                 consume(2);
-    //                 new_token.type=0;
-    //                 return new_token;
-    //             }
-    //             consume(1);
-    //         }
-    //         /* Caso o comentário não feche até o final do arquivo */
-    //         new_token.type=-1;
-    //         return new_token;
-    //     }
-    // }
+    /*se simbolo*/
+    if(issymbol(c))
+    {
+        consume(new_token);
+        
+        //se for comentario:
+        if(new_token->token[0]=='/' && c=='*')
+        {
+            consume(new_token);
+            while(c!=EOF)
+            {
+                if(c=='*')
+                {
+                    consume(new_token);
+                    if(c=='/') //fim do comentario
+                    {
+                        consume(new_token);
+                        strcpy(new_token->name_type,"COMENTARIO");
+                        new_token->type=0;
+                        return new_token;
+                    }
+                }
+                else
+                    consume(new_token);
+            }
+            //chegou ao fim e nao fechou o comentario
+            new_token->type=-1;
+            return new_token;
+        }
+        strcpy(new_token->name_type,"SIMBOLO");
+        new_token->type=2;
+        return new_token;
+    }
 
-    // /*se simbolo*/
-    // if(issymbol(peek(0)))
-    // {
-    //     new_token.token[0]=peek(0);
-    //     new_token.token[1]='\0';
-    //     strcpy(new_token.name_type,"SIMBOLO");
-    //     consume(1);
-    //     new_token.type=1;
-    //     return new_token;
-    // }
-    
-    // new_token.token[0]=peek(0);
-    // new_token.token[1]='\0';
-    // strcpy(new_token.name_type,"CHAR INVALIDO");
-    // consume(1);
-    // new_token.type = -2;
+    /* demais opções inválidas*/
+    consume(new_token);
+    strcpy(new_token->name_type,"CHAR INVALIDO");
+    new_token->type = -2;
+    return new_token;
 }
 
-
+/* print simples para um token */
 void print_token(token *token)
 {
-    printf("%s\t%s\n",token->name_type,token->token);
+    switch(token->type)
+    {
+    case 1:
+        printf("%s\t%s\n",token->name_type,token->token);    
+        return;
+    case 2:
+    case 3:
+        printf("%s\n",token->token);
+        return;
+    }
 }
+
+/* aumenta a memoria para alocação de tokens */
+token** expand_tokens(token **tokens, int *max_tokens)
+{
+    token **new_tokens;
+    *max_tokens = 2 * *max_tokens;
+
+    if( (new_tokens=realloc(tokens,(*max_tokens)*sizeof(*tokens))) == NULL)
+    {
+        puts("\nErro na alocação de memória");
+        return NULL;
+    }
+
+    return new_tokens;
+}
+
 
 int main()
 {
-    int i,max_tokens = 8;
+    int i,n_tokens,max_tokens = 8,j;
     token **tokens;
 
 
@@ -237,24 +234,32 @@ int main()
     i=0;
     while(c!=EOF){
 
-        // printf("\n\tvalor de c=%d\n",c);
-        
-        tokens[i++]=next_token();
-        if(tokens[i-1]->type==-1)
-        {
-            puts("\tERRO: Faltou fechar um comentário");
-            return 0;
-        }
-        else if(tokens[i-1]->type==-2)
-        {
-            printf("\tERRO: Caractere inválido '%s'\n",tokens[i-1]->token);
-            return 0;
-        }
-    }
+        if(i==max_tokens)
+            tokens = expand_tokens(tokens,&max_tokens);
 
-    for(i=0;i<max_tokens;i++)
+        tokens[i]=next_token();
+
+        switch(tokens[i]->type)
+        {
+        case -1:
+            puts("\tERRO: Faltou fechar um comentário");
+            return 1;
+        case -2:
+            printf("\tERRO: Caractere inválido '%s'\n",tokens[i]->token);
+            return 1;
+        case 3:
+            //colocando palavras reservadas em maiusculo
+            for(j=0;tokens[i]->token[j]!='\0';j++)
+                tokens[i]->token[j]-=32;
+        }
+
+        i++;
+    }
+    n_tokens=i;
+    for(i=0;i<n_tokens;i++)
     {
-        print_token(tokens[i]);
+        if(tokens[i]->type>0)
+            print_token(tokens[i]);
     }
 
 
