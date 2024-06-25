@@ -104,16 +104,6 @@ Implemente os seguintes construtores para nós de árvore:
     RegExp *new_union(RegExp *filho1, RegExp *filho2);
 
 
-
-Imprimindo uma árvore
----------------------
-
-Implemente uma função recursiva que recebe uma árvore e a imprime em stdout.
-Na primeira linha, imprima a tag do nó (e, no caso CHAR também imprima o char).
-Nas linhas subsequentes, imprima recursivamente os nós filhos, indentados por
-dois espaços. (Veja os exemplos de entradas e saídas)
-
-
 Gramática das expressões regulares
 ----------------------------------
 
@@ -247,33 +237,202 @@ RegExp *newUnion(RegExp *filho1, RegExp *filho2){
     return exp;
 }
 
-// parsers
+/*
+Grammar notation	Code representation
+Terminal	            Code to match and consume a token
+Nonterminal	            Call to that rule’s function
+|	            if or switch statement
+* or +	                while or for loop
+?	                if statement
+*/ 
 
-static RegExp *parseRegexp(){
-    
+char c;
+int p;
+int cp; /* contagem de parenteses*/
+void consume()
+{
+    c=getchar();
+    p++;
 }
-static RegExp *parseUniao(){
+static RegExp* parseRegexp();
+static RegExp* parseBasic(){
+    RegExp *e;
+    if(c!='(' && c!=')')
+    {
+        e =  newChar(c);
+        consume();
+    }
+    else if(c=='(')
+    {
+        consume();
+        cp++;
+        e = parseRegexp();
+        if(c!=')')
+        {
+            puts("\nerro!! esperava um parenteses");
+            exit(1);
+        }
+        else
+        {
+            consume();
+            cp--;
+        }
+    }
+    return e;
+}
+static RegExp* parseStar(){
+    RegExp *e1;
+
+    e1 = parseBasic();
+
+    while(c=='*'){
+        consume();
+        e1 = newStar(e1);
+    }
+    return e1;
+}
+static RegExp* parseConcat(){
+    RegExp *e1,*e2;
+    
+    switch(c){
+    case ')':
+        if(cp==0)
+        {
+            printf("\n\terro! nao esperava parenteses");
+            exit(1);
+        }
+    case '\n':
+    case '\0':
+    case '|':
+        return newEmpty();
+    }
+    
+    e1 = parseStar();
+    e2 = parseConcat();
+
+    if(e2->tag!=TAG_EMPTY)
+        return newConcat(e1,e2);
+    else
+        return e1;
+}
+static RegExp* parseUnion(){
     RegExp *e1,*e2;
     e1 = parseConcat();
     if(c=='|'){
-        e2 = parseConcat();
+        consume();
+        e2 = parseUnion();
         return newUnion(e1,e2);
     }
     
     return e1;
 }
-static RegExp *parseConcat(){
-    RegExp *e1,*e2;
-
-
+static RegExp* parseRegexp(){
+    return parseUnion();
 }
-static RegExp *parseStar();
-static RegExp *parseChar();
 
-char c;
+const char *types[] = {"EMPTY", "CHAR","STAR","CONCAT", "UNION"};
+
+void printIndent(int lvl)
+{
+    int i =0;
+
+    putchar('\n');
+    for(i=0;i<(lvl*2);i++)
+            putchar(' ');
+}
+void printTree(RegExp *tree, int indent_lvl)
+{
+   /* Imprimindo uma árvore
+    ---------------------
+
+    Implemente uma função recursiva que recebe uma árvore e a imprime em stdout.
+    Na primeira linha, imprima a tag do nó (e, no caso CHAR também imprima o char).
+    Nas linhas subsequentes, imprima recursivamente os nós filhos, indentados por
+    dois espaços. (Veja os exemplos de entradas e saídas) */
+//     Exemplo de saída
+// ----------------
+
+// CONCAT
+//   CHAR a
+//   CONCAT
+//     CHAR b
+//     STAR
+//       STAR
+//         CHAR c
+// UNION
+//   CONCAT
+//     CHAR a
+//     CHAR b
+//   UNION
+//     EMPTY
+//     CHAR c
+    int i;
+
+    printf("%s",types[tree->tag]);
+
+    switch(tree->tag)
+    {
+    case TAG_EMPTY:
+        return;
+    case TAG_CHAR:
+        printf(" %c",tree->u.charNode.c);
+        return;
+    case TAG_STAR:
+        printIndent(indent_lvl+1);
+        printTree(tree->u.starNode.exp,indent_lvl+1);
+        return;
+    case TAG_UNION:
+        printIndent(indent_lvl+1);
+        printTree(tree->u.unionNode.f1,indent_lvl+1);
+        printIndent(indent_lvl+1);
+        printTree(tree->u.unionNode.f2,indent_lvl+1);
+        return;
+    case TAG_CONCAT:
+        printIndent(indent_lvl+1);
+        printTree(tree->u.concatNode.f1,indent_lvl+1);
+        printIndent(indent_lvl+1);
+        printTree(tree->u.concatNode.f2,indent_lvl+1);
+        return;
+    }
+    return;
+}
+
+
 int main()
 {
-
-
+    RegExp *exp;
+    p=0;
+    cp=0;
+    consume();
+    exp = parseRegexp();
+    printTree(exp,0);
     return 0;
 }
+
+
+
+
+/* A FAZER:
+
+    - Indicar erro e posicao do erro na linha
+    - ler mais de uma linha de regex
+
+obs:
+QUal deve ser o comportamento caso ache uma estrela sem nada antes? ou seja, logo no começo ou depois de ( e |?
+
+A entrada '**' está gerando:
+
+STAR
+  CHAR *
+
+Outra entrada similar: **|*, gera:
+
+UNION
+  STAR
+    CHAR *
+  CHAR *
+
+
+
+
+*/
