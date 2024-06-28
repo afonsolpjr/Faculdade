@@ -14,105 +14,6 @@ Entregue um arquivo ZIP com o "main.c" e o "README.txt".
 Coloque um comentário com o seu nome no topo do arquivo.
 O readme deve explicar como compilar e rodar o programa.
 
-
-O que o programa deve fazer
----------------------------
-
-Seu programa deve ler linhas da entrada padrão (stdin). Cada linha contém uma
-expressão regular. Seu programa deve ler esta expressão regular, convertê-la
-para uma árvore, e imprimí-la na saída padrão (stdout).
-
-Caso a expressão regular seja inválida, seu programa deve imprimir em stderr
-uma mensagem de erro informando a posição (caracter da linha) e causa do erro.
- Após o erro, você pode abortar a execução do programa e não precisa imprimir 
-as árvores das pŕoximas linhas.
-
-Exemplo de entrada
-------------------
-
-abc**
-(ab||c)
-
-
-Exemplo de saída
-----------------
-
-CONCAT
-  CHAR a
-  CONCAT
-    CHAR b
-    STAR
-      STAR
-        CHAR c
-UNION
-  CONCAT
-    CHAR a
-    CHAR b
-  UNION
-    EMPTY
-    CHAR c
-
-Exemplos de mensagens de erro
-------------------------------
-
-(a)
-Erro de sintaxe na posição 3: esperava ')', encontrei '\n'
-
-(a)
-Erro de sintaxe na posição 4: esperava '\n', encontrei ')'
-
-
-
-Gramática das expressões regulares
-----------------------------------
-
-Os caracteres |*() e também '\n' e '\0' são considerados especiais.
-Todos os outros caracteres são considerados "normais".
-
-O operador de estrela tem precedência mais forte que concatenação, que por
-sua vez tem preferência mais forte que união. A regex da string vazia é
-representada por uma concatenação de 0 elementos. A gramática fica assim:
-
-    Regexp -> Uniao
-    Uniao -> lista de uma ou mais concatenações, separadas por '|'
-    Concat -> lista potencialmente vazia de itens estrelados
-    Estrela -> item básico, seguido de zero ou mais estrelas
-    Basico -> um caractere não-especial, ou uma regexp entre parênteses.
-
-
-Implementação do parser
-------------
-int main()-----------
-
-Mantenha um conjunto de variáveis globais para armazenar o estado interno do
-parser. Você precisa de alguma forma de saber o próximo caractere que ainda
-não foi lido, e sua posição na linha.
-
-Para parsear a gramática, crie um grupo de funções mutuamente recursivas,
-uma por não-terminal. Cada função consome quantos caracteres da entrada for
-necessário e retorna uma árvore.
-
-    static RegExp *parse_regexp();
-    static RegExp *parse_uniao();
-    static RegExp *parse_concat();
-    static RegExp *parse_estrela();
-    static RegExp *parse_basico();
-
-Pseudocódigo:
-
-    parse_uniao()
-        parse_concat()
-        enquanto proc char é '|'
-            parse_concat()
-
-    parse_concat()
-        enquanto prox char pode começar um item estrelado:
-            parse_estrela()
-
-    parse_estrela()
-        parse_basico()
-        enquanto prox char é estrela:
-            adiciona uma estrela 
 */
 
 
@@ -200,9 +101,9 @@ RegExp *newUnion(RegExp *filho1, RegExp *filho2){
 /*Variáveis globais */
 char c;
 int p,cp,line; /* Posição, contagem de parênteses e linha*/
+const char *types[] = {"EMPTY", "CHAR","STAR","CONCAT", "UNION"}; 
 
 /* Funções auxiliares */
-const char *types[] = {"EMPTY", "CHAR","STAR","CONCAT", "UNION"};
 void printIndent(int lvl)
 {
     int i =0;
@@ -248,7 +149,7 @@ void consume()
 }
 void printError()
 {
-    printf("Erro na linha %d, caractere na posicao %d:",line+1,p);
+    fprintf(stderr,"Erro na linha %d, caractere na posicao %d:",line+1,p);
 }
 
 /* Parseadores por tipos*/
@@ -264,7 +165,7 @@ static RegExp* parseBasic(){
         if(c!=')')
         {
             printError();
-            printf("\n\tFim de linha inesperado. (Esperando fechamento de parênteses)");
+            fprintf(stderr,"\n\tFim de linha inesperado. (Esperando fechamento de parênteses)");
             exit(1);
         }
         else
@@ -300,7 +201,7 @@ static RegExp* parseConcat(){
         {
             consume();
             printError();
-            printf("\n\tCaractere ')' não esperado.");
+            fprintf(stderr,"\n\tCaractere ')' não esperado.");
             exit(1);
         }
         [[fallthrough]];
@@ -324,9 +225,10 @@ static RegExp* parseUnion(){
     if(c=='*'){
         consume();
         printError();
-        printf("\n\tCaractere '*' não permitido em inicio de expressoes.");
+        fprintf(stderr,"\n\tCaractere '*' não permitido em inicio de expressoes.");
         exit(1);
     }
+    
     e1 = parseConcat();
     if(c=='|'){
         consume();
@@ -360,17 +262,17 @@ int main()
 
     consume();
     while(c!=EOF){
-
         if(line==max_exp){
             max_exp*=2;
             expressions = realloc(expressions,max_exp*sizeof(RegExp*));
         }
+
         cp=0;
         p=0;
         expressions[line] = parseLine();
-
         line++;
     }
+    
     for(i=0;i<line;i++)
     {
         printTree(expressions[i],0);
@@ -380,8 +282,3 @@ int main()
     return 0;
 }
 
-/* A FAZER:
-
-    - Imprimir erros em stderr
-        erros localizados no parse union, parseconcat, e parsebasic
-*/
