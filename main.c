@@ -121,7 +121,7 @@ void printTree(RegExp *tree, int indent_lvl)
     case TAG_EMPTY:
         return;
     case TAG_CHAR:
-        printf(" %c",tree->u.charNode.c, tree->u.charNode.c);
+        printf(" %c",tree->u.charNode.c);
         return;
     case TAG_STAR:
         printIndent(indent_lvl+1);
