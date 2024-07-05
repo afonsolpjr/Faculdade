@@ -208,6 +208,7 @@ static RegExp* parseConcat(){
     case '\n':
     case '\0':
     case '|':
+    case EOF:
         return newEmpty();
     }
     
