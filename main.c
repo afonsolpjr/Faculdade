@@ -121,7 +121,7 @@ void printTree(RegExp *tree, int indent_lvl)
     case TAG_EMPTY:
         return;
     case TAG_CHAR:
-        printf(" %c",tree->u.charNode.c);
+        printf(" %c",tree->u.charNode.c, tree->u.charNode.c);
         return;
     case TAG_STAR:
         printIndent(indent_lvl+1);
@@ -243,6 +243,11 @@ static RegExp* parseRegexp(){
 }
 static RegExp* parseLine(){
     RegExp *e;
+    if(c=='\n'){
+        consume();
+        e = newEmpty();
+        return e;
+    }
     e = parseRegexp();
     if(c=='\n')
         consume();
@@ -258,7 +263,7 @@ int main()
     max_exp = 4;
     line = 0 ;
 
-    expressions = malloc(sizeof(max_exp*sizeof(RegExp*)));
+    expressions = malloc(max_exp*sizeof(RegExp*));
 
     consume();
     while(c!=EOF){
