@@ -10,7 +10,7 @@ teste.exe
 *.out
 ModMat/*.gif
 ModMat/*.png
-
+*.vscode/
 # Pastas a serem ignoradas
 __pycache__/
 *ipynb_checkpoints/
