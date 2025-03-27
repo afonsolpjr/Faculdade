@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <math.h>
+
 /*3. Escreva um programa concorrente em C que recebe como entrada o numero de  ́
 threads T e um nome de arquivo, carregue desse arquivo a dimensao ̃ N e dois
 vetores de entrada, execute o calculo do produto interno desses dois vetores di-  ́
@@ -17,13 +19,13 @@ typedef struct{
  * @brief Printa os dados lidos (sanity check kkkkk)
  * @param tam_vetor 
  * @param vetores 
- * @param prod_interno 
+ * @param prod_int 
  */
-void printa_dados_lidos(int tam_vetor,float **vetores,float prod_interno){
+void printa_dados_lidos(int tam_vetor,float **vetores,float prod_int){
     int i,j;
     printf("\nDados lidos:"
         "\n\ttamanho de vetor:%d"
-        "\n\tproduto_interno=%f\n",tam_vetor,prod_interno);
+        "\n\tproduto_interno=%f\n",tam_vetor,prod_int);
 
     for(i=0;i<2;i++){
         printf("Vetor %d\n[",i);
@@ -40,7 +42,7 @@ void printa_dados_lidos(int tam_vetor,float **vetores,float prod_interno){
  * @param arg struct contendo vetores, e numero de elementos a serem processados
  * @return struct contendo
  */
-void *prod_interno_parcial(void *arg)
+void *prod_int_parcial(void *arg)
 {
     prod_int_parcial_targs *argumentos;
     double *retorno;
@@ -65,7 +67,7 @@ int main(int argc, char const *argv[])
     FILE * ptr_arqv;
     int i,tam_vetor,n_threads,posicao_comeco,erro;
     float *vetores[2];
-    double prod_interno_seq,*retorno,prod_int_concorrente;
+    double prod_int_seq,*retorno,prod_int_concorrente,diff;
     prod_int_parcial_targs *args;
     pthread_t *t_ids;
     
@@ -100,9 +102,9 @@ int main(int argc, char const *argv[])
         
     fread(vetores[0],sizeof(float),tam_vetor,ptr_arqv);
     fread(vetores[1],sizeof(float),tam_vetor,ptr_arqv);
-    fread(&prod_interno_seq,sizeof(double),1,ptr_arqv);
+    fread(&prod_int_seq,sizeof(double),1,ptr_arqv);
 
-    // printa_dados_lidos(tam_vetor,vetores,prod_interno_seq);
+    // printa_dados_lidos(tam_vetor,vetores,prod_int_seq);
         
     /* Estratégia para divisão da carga:
         - Cada thread receberá aproximadamente n=tam_vetor/n_threads elementos a processar o produto */
@@ -136,7 +138,7 @@ int main(int argc, char const *argv[])
         args->v2 = &vetores[1][posicao_comeco];
         posicao_comeco += args->n;
         /*criando threads*/
-        erro = pthread_create(&t_ids[i],NULL,prod_interno_parcial,(void*) args);      
+        erro = pthread_create(&t_ids[i],NULL,prod_int_parcial,(void*) args);      
         if(erro){
             printf("\nErro [%d] na criação de threads",erro);
             return 4;
@@ -156,9 +158,11 @@ int main(int argc, char const *argv[])
         prod_int_concorrente += (*retorno);
         free(retorno);
     }
+
+    diff = fabs( (prod_int_seq-prod_int_concorrente)/prod_int_seq );
     printf("\nResultado Concorrente: %f\n"
         "Resultado Sequencial: %f\n"
-        "DIferença absoluta: %f\n",prod_int_concorrente,prod_interno_seq,
-        fabs(prod_int_concorrente-prod_interno_seq));
+        "DIferença relativa: %.15f\n",
+        prod_int_concorrente,prod_int_seq,diff);
     return 0;
 }
