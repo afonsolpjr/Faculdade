@@ -11,7 +11,7 @@
 void *PrintHello (void* arg) {
    //typecasting do argumento
    long int idThread = (long int) arg;
-   long int retorno = idThread*2;
+   long int retorno = idThread*5;
    //log da thread
 
    pthread_exit((void*) retorno);

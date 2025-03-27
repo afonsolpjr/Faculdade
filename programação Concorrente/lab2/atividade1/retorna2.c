@@ -26,7 +26,7 @@ void *PrintHello (void *arg) {
   t_Args *args = (t_Args*) arg;
 
   //log da thread
-  printf("Sou a thread %d de %d threads\n", args->idThread, args->nThreads);
+  printf("executando thread %d/%d\n", args->idThread, args->nThreads);
 
   //aloca memoria para a estrutura de retorno
   ret = malloc(sizeof(t_Ret));
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
 
   //cria as threads
   for(int i=0; i<nthreads; i++) {
-    printf("--Aloca e preenche argumentos para thread %d\n", i);
+    // printf("--Aloca e preenche argumentos para thread %d\n", i);
     args = malloc(sizeof(t_Args));
     if (args == NULL) {
       printf("--ERRO: malloc()\n"); 
