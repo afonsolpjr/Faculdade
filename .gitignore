@@ -1,10 +1,8 @@
 # Tipos de arquivo gerais a serem ignorados
 **/a.exe
-teste.cpp
 /a.out
-teste
+teste.*
 *.class
-teste.exe
 *.zip
 *.exe
 *.out
