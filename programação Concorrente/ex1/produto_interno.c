@@ -72,7 +72,7 @@ int main(int argc, char const *argv[])
     }
     n_threads=atoi(argv[1]);
     if(!n_threads){
-        printf("\n Insira um numero de threads válido. [o numero inserido foi %d]",n_threads);
+        printf("\n Insira um numero de threads válido.\n",n_threads);
         return 2;
     }
         /*le tamanho do vetor*/

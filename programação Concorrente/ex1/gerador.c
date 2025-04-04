@@ -60,6 +60,10 @@ int main(int argc, char const *argv[])
         return 1;
     }
     tam_vetor = atoi(argv[1]);
+    if(tam_vetor==0){
+        printf("Tamanho do vetor = 0 ou não fornecido corretamente");
+        return 1;
+    }
 
     /*Alocando vetor*/
     for(i=0;i<2;i++)
