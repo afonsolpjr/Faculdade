@@ -3,20 +3,13 @@
 #include <pthread.h>
 #include <math.h>
 
-/*3. Escreva um programa concorrente em C que recebe como entrada o numero de  ́
-threads T e um nome de arquivo, carregue desse arquivo a dimensao ̃ N e dois
-vetores de entrada, execute o calculo do produto interno desses dois vetores di-  ́
-vidindo a tarefa entre as T threads de forma balanceada, e ao final compare o
-valor calculado com o valor registrado no arquivo de entrada.
-*/
-
 typedef struct{
     float *v1,*v2;
     int n,id;
 } prod_int_parcial_targs;
 
 /**
- * @brief Printa os dados lidos (sanity check kkkkk)
+ * @brief Printa os dados lidos (só para fins de debug)
  * @param tam_vetor 
  * @param vetores 
  * @param prod_int 
@@ -39,7 +32,7 @@ void printa_dados_lidos(int tam_vetor,float **vetores,float prod_int){
 
 /**
  * @brief Calcula o produto interno parcial (de n elementos) dos dois vetores dados
- * @param arg struct contendo vetores, e numero de elementos a serem processados
+ * @param arg 'struct contendo vetores, e numero de elementos a serem processados
  * @return struct contendo
  */
 void *prod_int_parcial(void *arg)

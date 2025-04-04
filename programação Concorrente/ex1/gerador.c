@@ -14,9 +14,9 @@ arquivo binario (tipo: double).  ́
 
 
 /*
-    @brief Retorna um vetor de tamanho @tam_vetor com valores quase-aleatórios em float.
-    @param vetor ponteiro para o vetor de floats
-    @param tam_vetor tamanho do vetor
+    @brief Popula, por referência, um vetor de tamanho @tam_vetor com valores quase-aleatórios (range de 0.01 a 500) em float.
+    @param vetor: ponteiro para o vetor de floats
+    @param tam_vetor: tamanho do vetor
 */
 void vetor_float_aleatorio(float *vetor,int tam_vetor){
     float num_aleatorio;
@@ -31,11 +31,11 @@ void vetor_float_aleatorio(float *vetor,int tam_vetor){
 }
 
 /* 
- @brief calcula produto interno entre 2 vetores
- @param v1 primeiro vetor
- @param v2 segundo vetor
- @param n tamanho dos vetores
- @return produto interno de v1 e v2
+ @brief Calcula produto interno entre 2 vetores
+ @param v1: primeiro vetor
+ @param v2: segundo vetor
+ @param n: tamanho dos vetores
+ @return (float) produto interno de v1 e v2
 */
 float produto_interno_seq(float *v1,float *v2,int n){
     int i;
