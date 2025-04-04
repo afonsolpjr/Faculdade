@@ -61,7 +61,7 @@ int main(int argc, char const *argv[])
     }
     tam_vetor = atoi(argv[1]);
     if(tam_vetor==0){
-        printf("Tamanho do vetor = 0 ou não fornecido corretamente");
+        printf("Tamanho do vetor = 0 ou não foi fornecido corretamente\n");
         return 1;
     }
 
