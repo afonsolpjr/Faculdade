@@ -157,5 +157,15 @@ int main(int argc, char const *argv[])
         "Resultado Sequencial: %f\n"
         "DIferença relativa: %.15f\n",
         prod_int_concorrente,prod_int_seq,diff);
+
+
+    /* Dados para formato JSON
+        diff = fabs( (prod_int_seq-prod_int_concorrente)/prod_int_seq );
+        printf("\n{\"prod_interno_concorrente\": %f,\n"
+            "\"prod_interno_sequencial\": %f,\n"
+            "\"diferenca_relativa\": %.15f,\n"
+            "\"tam\":%d,\"n_th\":%d},",
+            prod_int_concorrente,prod_int_seq,diff,tam_vetor,n_threads); 
+        */
     return 0;
 }

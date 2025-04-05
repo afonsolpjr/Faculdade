@@ -82,7 +82,7 @@ int main(int argc, char const *argv[])
     
     /* Calculando produto interno */
     produto_interno=produto_interno_seq(vetor[0],vetor[1],tam_vetor);
-    printf("\n\tProduto interno = %f\n",produto_interno);
+    // printf("\n\tProduto interno = %f\n",produto_interno);
 
     /* Criando arquivo binário */
     ptr_arquivo = fopen(argv[2],"w");
