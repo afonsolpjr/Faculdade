@@ -75,14 +75,10 @@ int main(int argc, char const *argv[])
         printf("\n Insira um numero de threads válido.\n");
         return 2;
     }
-        /*le tamanho do vetor*/
+        /* Lê o tamanho do vetor do binário */
     ptr_arqv = fopen(argv[2],"r");
     fread(&tam_vetor,sizeof(int),1,ptr_arqv);
     
-    if(n_threads>tam_vetor){
-        printf("O numero de threads indicado (%d) é maior que o tamanho do vetor (%d)."
-            " O programa será encerrado\n",n_threads,tam_vetor);
-    }
     
     /* Ler arquivo binario, inicializando vetores:
         conteúdo:tam,vetor1,vetor2,produto_interno */
@@ -107,29 +103,33 @@ int main(int argc, char const *argv[])
         - Número de elementos que ela deve processar
     */
 
-    /*O LOOP: Criando threads*/
+    /*O LOOP: Criando vetor de identificadores */
 
     t_ids = (pthread_t*) malloc(sizeof(pthread_t)*n_threads);
     if(!t_ids){
         puts("Problema na alocação de vetores para IDs de threads");
         return 3;
     }
+
+    /* Inicializando threads*/
     posicao_comeco=0;
     for(i=0;i<n_threads;i++){
-        /*Criando argumento*/
+        /* Criando argumento */
         args = (prod_int_parcial_targs*) malloc(sizeof(prod_int_parcial_targs));
         if(!args){
             printf("Problemas na alocação dos argumentos\n");
             return 3;
         }
+        
         args->id = i; 
-        // printf("criando thread %d\n",i);
+        /* printf("criando thread %d\n",i); */
         args->n = tam_vetor/n_threads;
-        if(i<(tam_vetor%n_threads))
+        if(i<(tam_vetor%n_threads)) /* (tam_vetor%n_threads) vetores precisarão ter +1 elemento a processar em relação a todos os outros */
             args->n++;
         args->v1 = &vetores[0][posicao_comeco];
         args->v2 = &vetores[1][posicao_comeco];
         posicao_comeco += args->n;
+
         /*criando threads*/
         erro = pthread_create(&t_ids[i],NULL,prod_int_parcial,(void*) args);      
         if(erro){
