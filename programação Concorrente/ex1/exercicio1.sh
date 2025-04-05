@@ -5,6 +5,7 @@
 # - Compila os arquivos, se não estiverem compilados
 # - Executa em sequencia o gerador do arquivo binário e o progarma concorrente, conforme os parametros passados para o script no seguinte formato:
 # ./script <tamanho-vetor> <nome_binario> <numero-de-threads>
+# O script oculta a saída do gerador, que mostra os vetores gerados.
 
 # Funções pra colorir texto
 RED="\033[31m"
@@ -46,4 +47,4 @@ TAM_VETOR=${1:?"Tamanho do vetor não fornecido."}
 NOME_BIN=${2:?"Nome do binário não fornecido"}
 NUM_THR=${3:?"Número de threads não fornecido"''}
 
-./gerador $TAM_VETOR $NOME_BIN && ./prod_interno $NUM_THR $NOME_BIN
+./gerador $TAM_VETOR $NOME_BIN > /dev/null && ./prod_interno $NUM_THR $NOME_BIN
