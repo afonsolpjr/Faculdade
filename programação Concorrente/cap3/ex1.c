@@ -364,19 +364,23 @@ int main(int argc, char *argv[])
     //criar matrizes
         // alocando ponteiros pra linhas
     a = matriz_float_aleatoria(n);
-    puts("\n");
     b = matriz_float_aleatoria(n);
 
-    // calculando resultado sequencial
-    c_seq = matmul(a,b,n);
-    printf("\n\tmultiplicacao sequencial feita\n");
     
-    c_conc = thr_matmul_prod_int(a,b,n);
+      // calculando resultado sequencial
+      c_seq = matmul(a,b,n);
+      printf("\n\tmultiplicacao sequencial feita\n");
+  
+      /* resultado concorrente */
+      c_conc = thr_matmul_prod_int(a,b,n);
+      printf("\tmultiplicação concorrente feita\n");
+  
+    
    
     // puts("matriz conc:\n");
     // printa_matriz(c_conc,n);
 
-    printf("Diferença agregada das matrizes: %.20f\n",matdiff(c_seq,c_conc,n));
+    printf("Diferença agregada das matrizes: %.16f\n",matdiff(c_seq,c_conc,n));
     printf("matrizes iguais? %d\n",mat_equal(c_conc,c_seq,n));
     printf("endereços iguais? %d\n",(c_conc==c_seq) );
 
