@@ -9,7 +9,7 @@
  @param n: tamanho dos vetores
  @return (float) produto interno de v1 e v2
 */
-float produto_interno_seq(float *v1,float *v2,int n){
+float dotprod_seq(float *v1,float *v2,int n){
     int i;
     float resultado=0;
     for(i=0;i<n;i++)
@@ -112,7 +112,7 @@ void printa_matriz(float **m, int n)
  * @param n dimensão de m
  * @return matriz m invertida
  */
-float **inverter_matriz(float **m, int n){
+float **transp_mat(float **m, int n){
     float **resultado;
     int i,j;
 
@@ -225,7 +225,7 @@ float matdiff(float** a,float** b,int n){
  * @param b matriz b
  * @param n dimensão das matrizes
  */
-float **matmul_prodint_seq(float **a,float **b,int n){
+float **matmul_dotprod_seq(float **a,float **b,int n){
     float **c;
     int i,j;
     float **b_t;
@@ -233,7 +233,7 @@ float **matmul_prodint_seq(float **a,float **b,int n){
     c = (float**) malloc(sizeof(float*)*n);
     alloc_check(c);
 
-    b_t = inverter_matriz(b,n);
+    b_t = transp_mat(b,n);
 
     for ( i = 0; i < n; i++)
     {
@@ -241,7 +241,7 @@ float **matmul_prodint_seq(float **a,float **b,int n){
         alloc_check(c[i]);
 
         for ( j = 0; j < n; j++)
-            c[i][j]=produto_interno_seq(a[i],b_t[j],n);
+            c[i][j]=dotprod_seq(a[i],b_t[j],n);
     }
     free(b_t);
     return c;
@@ -269,6 +269,21 @@ int mat_equal(float **a,float **b,int n){
     return 1;
 }
 
+
+/**
+ * @brief 
+ * @param n 
+ */
+void matmul_bin_generator(int n, char nome_arquivo[]){
+
+    float **a,**b, **c;
+    FILE *ptr_arquivo;
+    a = matriz_float_aleatoria(n);
+    b = matriz_float_aleatoria(n);
+
+    
+    return;
+}
 
 int main(int argc, char *argv[])
 {
