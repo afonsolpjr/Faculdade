@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <time.h>
 
 /* 
  @brief Calcula produto interno entre 2 vetores (de forma sequencial)
@@ -33,20 +33,27 @@ void alloc_check(void *ptr)
 
 
 /*
-    @brief Popula, por referência, um vetor de tamanho @tam_vetor com valores quase-aleatórios (range de 0.01 a 500) em float.
+    @brief Cria e popula, um vetor de tamanho @tam_vetor com valores quase-aleatórios (range de -500 a 500) de floats.
     @param vetor: ponteiro para o vetor de floats
     @param tam_vetor: tamanho do vetor
 */
-void vetor_float_aleatorio(float *vetor,int tam_vetor){
-    float num_aleatorio;
+float *random_float_array(int tam_vetor){
+    float num_aleatorio,*array;
     int i;
+
+
+    array = (float*) malloc(sizeof(float)*tam_vetor);
+    alloc_check((void*) array);
+
     for(i=0;i<tam_vetor;i++){
         num_aleatorio = 5.0/(rand()%500+1)*100;
         if(rand()%2)
             num_aleatorio*=-1;
-        vetor[i]=num_aleatorio;
+        array[i]=num_aleatorio;
         // printf(" %f ",num_aleatorio);
     }
+
+    return array;
 }
 
 /**
@@ -65,12 +72,7 @@ float ** matriz_float_aleatoria(int n)
     alloc_check((void*) m);
 
     for ( i = 0; i < n; i++) //alocando linhas
-    {
-        m[i]= (float*) malloc(sizeof(float)*n);
-        alloc_check((void*) m[i]);
-
-        vetor_float_aleatorio(m[i],n);
-    }
+        m[i]= random_float_array(n);
 
     /* for ( i = 0; i < tamanho; i++)
     {
@@ -91,12 +93,12 @@ float ** matriz_float_aleatoria(int n)
  * @param m matriz
  * @param n dimensao de m
  */
-void printa_matriz(float **m, int n)
+void mat_print(float **m, int n)
 {
     int i,j;
     for ( i = 0; i < n; i++)
     {
-        for ( int j = 0; j < n; j++)
+        for ( j = 0; j < n; j++)
         {
             printf(" %f ",m[i][j]);
         }
@@ -105,6 +107,21 @@ void printa_matriz(float **m, int n)
     putchar('\n'); 
 }
 
+
+void mat_const_print(float (*matriz)[], int n)
+{
+    int i,j;
+    float (*m)[n] = (float(*)[n])matriz;
+    for ( i = 0; i < n; i++)
+    {
+        for ( j = 0; j < n; j++)
+        {
+            printf(" %f ",m[i][j]);
+        }
+        putchar('\n');
+    }
+    putchar('\n'); 
+}
 
 /**
  * @brief Retorna a matriz m invertida
@@ -132,7 +149,7 @@ float **transp_mat(float **m, int n){
             resultado[j][i]=m[i][j];     
     }
     // printf("\n\tinvertida:\n");
-    // printa_matriz(resultado,n);    
+    // mat_print(resultado,n);    
     return resultado;
 }
 
@@ -274,21 +291,98 @@ int mat_equal(float **a,float **b,int n){
  * @brief 
  * @param n 
  */
-void matmul_bin_generator(int n, char nome_arquivo[]){
+void matmul_bin_generator(int n, char filename[]){
 
     float **a,**b, **c;
+    int i;
     FILE *ptr_arquivo;
+    printf("teste!");
+    
     a = matriz_float_aleatoria(n);
     b = matriz_float_aleatoria(n);
-
     
+    mat_print(a,n);
+    mat_print(b,n);
+
+    c = matmul(a,b,n);
+    mat_print(c,n);
+
+    ptr_arquivo = fopen(filename,"w");
+    if(!ptr_arquivo){
+        printf("Erro na criação de arquivo.\n");
+        exit(1);
+    }
+
+    fwrite(&n,sizeof(int),1,ptr_arquivo);
+    
+    for ( i = 0; i < n; i++)
+        fwrite(a[i],sizeof(float),n,ptr_arquivo);
+
+    for ( i = 0; i < n; i++)
+        fwrite(b[i],sizeof(float),n,ptr_arquivo);
+
+    for ( i = 0; i < n; i++)
+        fwrite(c[i],sizeof(float),n,ptr_arquivo);
+
+ 
+    
+    free(a);
+    free(b);
+    free(c);
     return;
 }
 
+void matmul_bin_reader(char filename[]){
+    FILE *file_ptr;
+    int n,i;
+    float **a,**b,**c;
+
+    file_ptr = fopen(filename,"r");
+
+    fread(&n,sizeof(int),1,file_ptr);
+    
+    /* Se for alocar blocos contiguos */
+
+    // a = (float(*)[]) malloc(sizeof(float)*n*n);
+    // b = (float*) malloc(sizeof(float)*n*n);
+    // c = (float*) malloc(sizeof(float)*n*n);
+
+
+    a = (float**) malloc(sizeof(float*)*n);
+    alloc_check(a);
+    for(i=0;i<n;i++){
+        a[i] = (float*) malloc(sizeof(float)*n);
+        fread(a[i],sizeof(float),n,file_ptr);
+    }
+
+    b = (float**) malloc(sizeof(float*)*n);
+    alloc_check(b);
+    for(i=0;i<n;i++){
+        b[i] = (float*) malloc(sizeof(float)*n);
+        fread(b[i],sizeof(float),n,file_ptr);
+    }
+     
+    c = (float**) malloc(sizeof(float*)*n);
+    alloc_check(c);
+    for(i=0;i<n;i++){
+        c[i] = (float*) malloc(sizeof(float)*n);
+        fread(c[i],sizeof(float),n,file_ptr);
+    }
+    
+    mat_print(a,n);
+    mat_print(b,n);
+    mat_print(c,n);
+
+}
+
+
 int main(int argc, char *argv[])
 {
-    
+    srand(time(NULL));
+    // matmul_bin_generator(atoi(argv[1]),"matmul.bin");
+    matmul_bin_reader("matmul.bin");
 
+    // printf("Tamanho de ptr = %ld\n",sizeof(ptr));
     return 0;
 }
 
