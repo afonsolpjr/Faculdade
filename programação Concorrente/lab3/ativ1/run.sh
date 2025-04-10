@@ -37,6 +37,7 @@ fi
 TIPOS_EXECUCAO=(2)
 FLAGS=("-O0" "-O1" "-O2"  "-O3")
 
+MELHOR_FLAG=''
 
 
 atividade1(){
@@ -61,53 +62,33 @@ atividade1(){
                     done
                 done
             done
-
+    MELHOR_FLAG=$(python3 analise.py)
+    echo -e "\n\tFlag com o menor tempo médio geral: $MELHOR_FLAG"
 }
+
+
 atividade2(){
-    for tipo_execucao in "${TIPOS_EXECUCAO[@]}";do
-        if [ $tipo_execucao -eq 1 ];then      # errei mano, sequencial é com uma thread.
-            for flag in "${FLAGS[@]}";do
+    COMANDO="gcc $MELHOR_FLAG -o matvet -Wall matvet.c";
+    $COMANDO;
 
-                COMANDO="gcc $flag -o matvet -Wall matvet.c";
-                $COMANDO;
+    for dim in "${DIMENSOES[@]}";do
 
-                for dim in "${DIMENSOES[@]}";do
-                    # programa <nome binario> <tipo execucao> <n threads>
-                    NOME_BIN="matvet$dim.bin"
-                    COMANDO="./matvet $NOME_BIN $tipo_execucao"
+        for n_threads in $(seq 2 $MAX_T);do
+            # programa <nome binario> <tipo execucao> <n threads>
+            NOME_BIN="matvet$dim.bin"
+            COMANDO="./matvet $NOME_BIN $tipo_execucao $n_threads"
 
-                    for ((i=1;i<=10;i++));do
-                        OUTPUT=$($COMANDO)
-                        S1="s/%tipo/$tipo_execucao/"         #substituicoes
-                        S2="s/%flag/$flag/"
-                        echo $OUTPUT | sed -e $S1 -e $S2 >> execucoes.csv
-                    done
-                done
-            done
+            for ((i=1;i<=10;i++));do
+                OUTPUT=$($COMANDO)
+                S1="s/%tipo/$tipo_execucao/"         #substituicoes
+                S2="s/%flag/$MELHOR_FLAG/"
+                echo $OUTPUT | sed -e $S1 -e $S2 >> execucoes.csv
 
-
-        else
-            gcc -o matvet -Wall matvet.c
-
-            for dim in "${DIMENSOES[@]}";do
-
-                for NUM_THR in $(seq 1 $MAX_T);do
-                    # programa <nome binario> <tipo execucao> <n threads>
-                    NOME_BIN="matvet$dim.bin"
-                    COMANDO="./matvet $NOME_BIN $tipo_execucao $NUM_THR"
-
-                    for ((i=1;i<=10;i++));do
-                        OUTPUT=$($COMANDO)
-                        S1="s/%tipo/$tipo_execucao/"         #substituicoes
-                        S2="s/%flag/$flag/"
-                        echo $OUTPUT | sed -e $S1 -e $S2 >> execucoes.csv
-                    done
-
-                done
 
             done
-        fi
+        done
     done
+
 }
 
 
@@ -118,6 +99,7 @@ read -p "Insira o numero: " ATIVIDADE
 case $ATIVIDADE in
     1)
         atividade1
+        atividade2
     ;;
 
     2)

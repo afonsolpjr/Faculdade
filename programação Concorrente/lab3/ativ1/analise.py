@@ -1,5 +1,5 @@
 import csv
-
+import matplotlib.pyplot as plt
 
 # Keys:
 # "tipo_execucao","flags","n_threads","dimensao",
@@ -37,5 +37,22 @@ for flag in flags:
         valores = [item['t_total'] for item in flag_execs]
         # print("Valores para flag {} e dimensao {}:{}".format(flag,dim,len(valores)))
         data[flag][dim] = sum(valores)/len(valores)
+    
+    plt.scatter(list(data[flag].keys()),list(data[flag].values()),
+                marker='.')
+    plt.plot(list(data[flag].keys()),list(data[flag].values()),
+                label=flag,
+                linestyle='dotted')
+    
+    plt.xlabel("Dimensão da matriz")
+    plt.ylabel("Tempo médio de execução em segundos")
+    plt.title("Tempo de execução por dimensão da matriz e nível de otimização")
+    plt.legend()
 
-print(data)
+plt.savefig('graf.png')
+media_geral={}
+for flag in flags:
+    media_geral[flag] = sum(list(data[flag].values()))/len(list(data[flag].values()))
+
+# print(media_geral)
+print(min(media_geral, key = media_geral.get ))
