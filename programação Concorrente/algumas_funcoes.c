@@ -296,16 +296,16 @@ void matmul_bin_generator(int n, char filename[]){
     float **a,**b, **c;
     int i;
     FILE *ptr_arquivo;
-    printf("teste!");
     
     a = matriz_float_aleatoria(n);
     b = matriz_float_aleatoria(n);
     
-    mat_print(a,n);
-    mat_print(b,n);
-
+  
     c = matmul(a,b,n);
-    mat_print(c,n);
+
+    // mat_print(a,n);
+    // mat_print(b,n);
+    // mat_print(c,n);
 
     ptr_arquivo = fopen(filename,"w");
     if(!ptr_arquivo){
@@ -375,12 +375,26 @@ void matmul_bin_reader(char filename[]){
 
 }
 
+/**
+ * @brief Retorna o instante de tempo atual em segundos
+ * @return 
+ */
+double actual_time() {
+    struct timespec tempo;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &tempo);
+    return tempo.tv_sec + tempo.tv_nsec/1000000000.0;
+}
 
 int main(int argc, char *argv[])
 {
+    double start,exec_time;
     srand(time(NULL));
-    // matmul_bin_generator(atoi(argv[1]),"matmul.bin");
-    matmul_bin_reader("matmul.bin");
+    start = actual_time();
+    matmul_bin_generator(atoi(argv[1]),"matmul.bin");
+    exec_time =  actual_time() - start;
+
+    printf("Tempo que se passou = %f\n",exec_time);
+    // matmul_bin_reader("matmul.bin");
 
     // printf("Tamanho de ptr = %ld\n",sizeof(ptr));
     return 0;

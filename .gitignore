@@ -6,6 +6,7 @@ teste*
 *.zip
 *.exe
 *.out
+*.bin
 ModMat/*.gif
 ModMat/*.png
 *.vscode/

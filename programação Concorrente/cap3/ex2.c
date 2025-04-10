@@ -14,8 +14,10 @@ matriz de saída. */
 
 typedef struct{
     int n;
-    float *linha;
-    float **matriz;
+    int n_linhas;
+    float **linha_inicial; 
+    float **b;
+    float **resultado;
 }thr_arg;
 
 
@@ -75,27 +77,43 @@ void printa_matriz(float **m, int n)
  * @param matriz matriz 
  * @return 
  */
-void * thr_calc_linha_matriz(void *targs)
+void * thr_calc_linhas_matriz(void *targs)
 {
     thr_arg *args;
-    float *resultado;
-    int i;
+    float **resultado;
+    int i,j,k;
 
     args = (thr_arg*) targs;
 
-    resultado = (float*) malloc(sizeof(float)*args->n);
-    alloc_check((void*) resultado);
+    printf("n_linhas:%d\n",args->n_linhas);
+    // para cada linha, popular matriz 'resultado'
+    for( i=0; i<args->n_linhas ; i++ ){
+        args->resultado[i] = (float*) malloc(sizeof(float)*args->n);
+        alloc_check(args->resultado[i]);
+        printf("Linha da matriz que to calculando:\n");
+        for(k=0;k<args->n;k++)
+            printf(" %f ",args->linha_inicial[i][k]);
+        for ( j = 0; j < args->n; j++)
+        {  
+           
 
-    for ( i = 0; i < args->n ; i++)
-    {
-        resultado[i]=produto_interno_seq(args->linha,args->matriz[i],args->n);
+            args->resultado[i][j] = produto_interno_seq(args->linha_inicial[i],args->b[j],args->n);
+            printf("\nresultado:%f\n",args->resultado[i][j]);
+        }
     }
-    free(args);
-    pthread_exit((void*)resultado);
+    
+    free(targs);
+    pthread_exit(NULL);
 }
 
 
-
+/**
+ * @brief Valida se o argumento na posicao 'pos' é um inteiro
+ * @param pos posicao do argumento a ser checado
+ * @param argc arg counter da main
+ * @param argv arg values da main
+ * @return inteiro caso na posicao haja um inteiro, caso contrario um erro é notificado e o programa encerra
+ */
 int valida_intarg(int pos, int argc, char *argv[])
 {
     int val;
@@ -169,7 +187,7 @@ float ** matriz_float_aleatoria(int n)
  * @param n dimensão de m
  * @return matriz m invertida
  */
-float **inverter_matriz(float **m, int n){
+float **transp_mat(float **m, int n){
     float **resultado;
     int i,j;
 
@@ -260,7 +278,7 @@ float **matmul_prodint_seq(float **a,float **b,int n){
     c = (float**) malloc(sizeof(float*)*n);
     alloc_check(c);
 
-    b_t = inverter_matriz(b,n);
+    b_t = transp_mat(b,n);
 
     for ( i = 0; i < n; i++)
     {
@@ -304,48 +322,50 @@ int mat_equal(float **a,float **b,int n){
  * @param n dimensao das matrizes
  * @return 
  */
-float **thr_matmul_prod_int(float **a, float **b, int n)
+float **thr_matmul_prod_int(float **a, float **b, int n, int n_threads)
 {
-    int i;
+    int i,linha_inicial;
     float **c,**bT;
     pthread_t *thr_ids;
     thr_arg *args;
 
 
-    /* criar identificadores de threads. Serão n threads */
-    thr_ids = (pthread_t*) malloc(sizeof(pthread_t)*n);
+    /* criar identificadores de threads. */
+    thr_ids = (pthread_t*) malloc(sizeof(pthread_t)*n_threads);
     alloc_check(thr_ids);
 
-    // invertendo matriz pra facilitar o calculo dos elementos
-    bT = inverter_matriz(b,n);
+    // transpondo matriz pra facilitar o calculo dos elementos
+    bT = transp_mat(b,n);
 
-    for ( i = 0; i < n; i++)
+    c = (float**) malloc(sizeof(float*)*n);
+    alloc_check(c);
+    linha_inicial = 0;
+    for ( i = 0; i < n_threads; i++)
     {
-        //criando n fluxos de execucao, um para cada linha
+        //criando n_threads fluxos de execucao
         args = (thr_arg*) malloc(sizeof(thr_arg));
         alloc_check(args);
 
-        args->linha = a[i];
-        args->matriz = bT;
+        args->linha_inicial = &a[linha_inicial];
+        args->n_linhas = (i < (n % n_threads)) ? (n / n_threads)+1 : (n / n_threads) ;
+        linha_inicial += args->n_linhas;
+        args->resultado = c;
+        args->b = bT;
         args->n = n;
 
-        if(pthread_create(&thr_ids[i],NULL,thr_calc_linha_matriz,(void*)args)){
+        if(pthread_create(&thr_ids[i],NULL,thr_calc_linhas_matriz,(void*)args)){
             printf("\nErro na criação da thread n° %d",i);
             exit(1);
         }
 
     }
     
-    //esperar por threads para popular matriz resultado
-    c = (float**) malloc(sizeof(float*)*n);
-    alloc_check(c);
-    for ( i = 0; i < n; i++)
+    //esperar por threads 
+    for ( i = 0; i < n_threads; i++)
     {
-        // c[i] = (float*) malloc(sizeof(float)*n);
-        // alloc_check(c[i]);
-        
-        if(pthread_join(thr_ids[i],(void**)&c[i])){
+        if(pthread_join(thr_ids[i],NULL)){
             printf("Erro no retorno da thread n°%d",i);
+            exit(1);
         }
     }
 
@@ -354,25 +374,27 @@ float **thr_matmul_prod_int(float **a, float **b, int n)
 
 int main(int argc, char *argv[])
 {
-    int n;
+    int n,n_threads;
     float **a,**b,**c_seq,**c_conc;
   
     srand(time(NULL));
     //receber tamanho de n como argumento
     n = valida_intarg(1,argc,argv);
-
+    n_threads = valida_intarg(2,argc,argv);
     //criar matrizes
         // alocando ponteiros pra linhas
     a = matriz_float_aleatoria(n);
     b = matriz_float_aleatoria(n);
 
-    
+    printa_matriz(a,n);
+    printa_matriz(b,n);
       // calculando resultado sequencial
       c_seq = matmul(a,b,n);
       printf("\n\tmultiplicacao sequencial feita\n");
+      printa_matriz(c_seq,n);
   
       /* resultado concorrente */
-      c_conc = thr_matmul_prod_int(a,b,n);
+      c_conc = thr_matmul_prod_int(a,b,n,1);
       printf("\tmultiplicação concorrente feita\n");
   
     
