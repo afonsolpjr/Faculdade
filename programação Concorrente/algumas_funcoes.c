@@ -57,22 +57,22 @@ float *random_float_array(int tam_vetor){
 }
 
 /**
-* @brief Gera uma matriz quadrada de tamanho n, com floats quase aleatórios.
-* @param m ponteiro para a matriz
-* @param n dimensão da matriz
+* @brief Gera uma matriz  de tamanho , com floats quase aleatórios.
+* @param n numero de linhas
+* @param m numero de colunas
 * @return ponteiro para a matriz alocada 
  */
-float ** matriz_float_aleatoria(int n)
+float ** random_float_matrix(int n,int m)
 {
     int i;
-    float **m;
+    float **mat;
 
     // alocando ponteiros pra linhas
-    m = (float**) malloc(sizeof(float*)*n);
-    alloc_check((void*) m);
+    mat = (float**) malloc(sizeof(float*)*n);
+    alloc_check((void*) mat);
 
     for ( i = 0; i < n; i++) //alocando linhas
-        m[i]= random_float_array(n);
+        mat[i]= random_float_array(m);
 
     /* for ( i = 0; i < tamanho; i++)
     {
@@ -297,8 +297,8 @@ void matmul_bin_generator(int n, char filename[]){
     int i;
     FILE *ptr_arquivo;
     
-    a = matriz_float_aleatoria(n);
-    b = matriz_float_aleatoria(n);
+    a = random_float_matrix(n);
+    b = random_float_matrix(n);
     
   
     c = matmul(a,b,n);
@@ -375,6 +375,7 @@ void matmul_bin_reader(char filename[]){
 
 }
 
+<<<<<<< Updated upstream
 /**
  * @brief Retorna o instante de tempo atual em segundos
  * @return 
@@ -383,10 +384,36 @@ double actual_time() {
     struct timespec tempo;
     clock_gettime(CLOCK_MONOTONIC_RAW, &tempo);
     return tempo.tv_sec + tempo.tv_nsec/1000000000.0;
+=======
+void matvec_bin_generator(int n, int m, char filename[]){
+    float **a,*b;
+    int i,j;
+    FILE *f_ptr;
+
+    a = random_float_matrix(n,m);
+    b = random_float_array(m);
+
+    f_ptr = fopen(filename,"w");
+
+    fwrite(&n,sizeof(int),1,f_ptr);
+    fwrite(&m,sizeof(int),1,f_ptr);
+
+    //escrever matriz
+    for ( i = 0; i < n; i++)
+        fwrite(a[i],sizeof(float),m,f_ptr);
+
+    fwrite(b,sizeof(float),m,f_ptr);
+
+    fclose(f_ptr);
+    //escrever vetor
+
+    
+>>>>>>> Stashed changes
 }
 
 int main(int argc, char *argv[])
 {
+<<<<<<< Updated upstream
     double start,exec_time;
     srand(time(NULL));
     start = actual_time();
@@ -395,6 +422,13 @@ int main(int argc, char *argv[])
 
     printf("Tempo que se passou = %f\n",exec_time);
     // matmul_bin_reader("matmul.bin");
+=======
+    int n,m;
+    srand(time(NULL));
+    // matmul_bin_generator(atoi(argv[1]),"matmul.bin");
+    
+    matvec_bin_generator
+>>>>>>> Stashed changes
 
     // printf("Tamanho de ptr = %ld\n",sizeof(ptr));
     return 0;
