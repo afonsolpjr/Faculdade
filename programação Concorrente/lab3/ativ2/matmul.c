@@ -46,6 +46,7 @@ void vec_print(float *vec,int n){
         printf(" %f ",vec[i]);
     return;
 }
+
 /**
  * @brief Printa matriz 'm' de dimensão (n x m)
  * @param m matriz
@@ -63,94 +64,101 @@ void mat_print(float *mat, int n, int m)
 }
 
 /**
- * @brief Lê do descrito de arquivo f_ptr, e carrega a matriz mat,e o vetor vec
- * @param f_ptr Descritor de arquivo já aberto
- * @param mat ponteiro para o vetor a ser populado como a matriz
- * @param n numero de linhas da matriz
- * @param m numero de colunas da matriz
- * @return retorna o vetor vec
+ * @brief Lê duas matrizes alocadas continuamente no arquivo de nome filename
+ * @param filename nome do arquivo binario
+ * @param a ponteiro para matriz a
+ * @param b ponteiro para matriz b
+ * @return dimensao da matriz
  */
-float *matvec_bin_reader(FILE *f_ptr,float **mat, int n,int m){
-    float *vec;
+int matmul_bin_reader(char filename[],float **a, float**b)
+{
+    FILE *file_ptr;
+    int n;
 
-    *mat = (float*) malloc(sizeof(float)*n*m);
-    alloc_check((void*)*mat);
+    file_ptr = fopen(filename,"r");
 
-    vec = (float*)malloc(sizeof(float)*m);
-    alloc_check((void*)vec);
-
-    fread_check(fread(*mat,sizeof(float),n*m,f_ptr));
-    fread_check(fread(vec,sizeof(float),m,f_ptr));
-    fclose(f_ptr);
-
-    // mat_print(*mat,n,m);
-    // vec_print(vec,m);
-    return vec;
-}
+    fread_check(fread(&n,sizeof(int),1,file_ptr));
+    
+    /* Se for alocar blocos contiguos */
+    // a = (float(*)[]) malloc(sizeof(float)*n*n);
+    // b = (float*) malloc(sizeof(float)*n*n);
+    // c = (float*) malloc(sizeof(float)*n*n);
 
 
-/**
- * @brief Multiplicação sequencial de Matrizes por vetores.  
- * @param n nº de linhas da matriz
- * @param m nº de colunas da matriz
- * @param a matriz de dimensoes (n x m)
- * @param b vetor de tamanho n
- * @return Resultado de "ab"
- */
-float *matvet_seq(int n,int m,float *a,float *b){
-    float *c;
+    *a = (float*) malloc(sizeof(float)*n*n);
+    alloc_check(*a);
+    fread_check(fread(*a,sizeof(float),n*n,file_ptr));
+    // mat_print(*a,n,n);
+    
+    
 
-    int i;
+    *b = (float*) malloc(sizeof(float)*n*n);
+    alloc_check(*b);
+    fread_check(fread(*b,sizeof(float),n*n,file_ptr));
+    
+    // printf("\n\tdimensão = %d, a=b? %d\n",n,(*a==*b));
 
-    c = (float*)malloc(sizeof(float)*n);
-    alloc_check((void*)c);
+    // mat_print(*b,n,n);
+    
+    // c = (float*) malloc(sizeof(float)*n*n);
+    // fread(c,sizeof(float),n*n,file_ptr);
+    
+    // mat_print(a,n,n);
+    // mat_print(b,n,n);
 
-    for ( i = 0; i < n; i++)
-    {
-            c[i] = dotprod_seq(&a[i*m],b,m);
-    }
-    return c;
+    // mat_print(c,n,n);
+    return n;
 }
 
 /**
- * @brief Estrutura para thr_matvet
+ * @brief Estrutura para thr_matmul
  */
 typedef struct{
     int n;
-    int m;
-    float *linha_inicial;
+    float *linha_inicial_a;
     int carga;
     float *b;
-    float *linhas_c;
-}thr_args;
+    float *linha_inicial_c;
+}thr_matmul_args;
 
 /**
- * @brief Tarefa a ser executada pela matvet_conc
+ * @brief Tarefa a ser executada pela matmul_conc
  * @param t_arg 
  * @return 
  */
-void *thr_matvet(void *t_arg){
-    thr_args *args;
-    float *aux;
-    int i;
+void *thr_matmul(void *t_arg){
+    thr_matmul_args *args;
+    float *aux_a,*aux_b,*aux_c;
+    int i,j;
 
-    args = (thr_args*) t_arg;
+    args = (thr_matmul_args*) t_arg;
     for ( i = 0; i < args->carga; i++){
+        //calcular linha inteira
+        aux_a = &args->linha_inicial_a[ i*args->n ];
+        aux_c = &args->linha_inicial_c[ i*args->n ];
 
-        aux = &args->linha_inicial[ i*args->m];
-        // printf("\n\t linha que vou trabalhar:");
-        // vec_print(aux,args->n);
+        // printf("\n\t linhas (a,b) que vou trabalhar:");
+        // vec_print(aux_a,args->n);
 
-        args->linhas_c[i] = dotprod_seq(aux,args->b,args->n);
+        for ( j = 0; j < args->n; j++)
+        {
+            //calcular cada elemento
+            aux_b = &args->b[ j*args->n ];
+            aux_c[j] = dotprod_seq(aux_a,aux_b,args->n);
+            // printf("\nLinha de b\n");
+            // vec_print(aux_b,args->n);
+            // printf("\nResultado: %f",aux_c[j]);
+        }        
     }
     free(args);
+    // puts("frim da thread");
     pthread_exit(NULL);
 }
 
 
 /**
- * @brief Cria threads para execucao de multiplicacao matriz x vetor
- * Divide o numero de elementos a serem calculadis entre as threads
+ * @brief Cria threads para execucao de multiplicacao matriz x matriz
+ * Divide o numero de linhas a serem calculadas entre as threads
  * 
  * @param n numero de linhas da matriz
  * @param m numero de colunas da matriz / linhas do vetor
@@ -159,42 +167,41 @@ void *thr_matvet(void *t_arg){
  * @param b matriz b
  * @return matriz c, resultante de a*b, como vetor contínuo
  */
-float * matvec_conc(int n,int m,int n_threads,float *a,float *b){
-    int i,pos_inicial,carga;
+float * matmul_conc(int n,int n_threads,float *a,float *b){
+    int i,linha_inicial_c,carga;
     pthread_t *thr_ids;
-    thr_args *t_args;
+    thr_matmul_args *t_args;
     float *c;
+
     /* o que cada thread precisa?
-        - numero de elementos do vetor a ser calculado
+        - numero de linhas a serem calculadas
         - linha inicial de "a" a ser operada
-        - numero m de elementos do vetor (linhas de a / colunas de b)
-        - matriz a
-        - vetor b
-        - vetor resultante
+        - dimensao da matriz
+        - matriz b
+        - linha inicial c para guardar resultados
         */
     thr_ids = (pthread_t*) malloc(sizeof(pthread_t)*n_threads);
     alloc_check((void*)thr_ids);
 
-    c = (float*) malloc(sizeof(float)*n);
+    c = (float*) malloc(sizeof(float)*n*n);
 
     carga = n/n_threads;
-    pos_inicial = 0;
+    linha_inicial_c = 0;
     for ( i = 0; i < n_threads; i++)
     {
-        t_args = (thr_args*) malloc(sizeof(thr_args));
+        t_args = (thr_matmul_args*) malloc(sizeof(thr_matmul_args));
         alloc_check((void*)t_args);
 
-        t_args->linha_inicial = &a[pos_inicial*m];
+        t_args->linha_inicial_a = &a[linha_inicial_c*n];
         t_args->n = n;
-        t_args->m = m;
         t_args->b = b;
         t_args->carga = (i < (n%n_threads)? carga+1 : carga);
-        t_args->linhas_c = &c[pos_inicial];
-        pos_inicial += t_args->carga;
+        t_args->linha_inicial_c = &c[linha_inicial_c*n];
+        linha_inicial_c += t_args->carga;
 
         // printf("\n\tthread %d criada",i);
 
-        if(pthread_create(&thr_ids[i],NULL,thr_matvet,(void*)t_args)){
+        if(pthread_create(&thr_ids[i],NULL,thr_matmul,(void*)t_args)){
             printf("Erro na criação da threads nº %d\n",i);
             exit(1);
         }
@@ -246,7 +253,7 @@ typedef struct{
  * @param data 
  */
 void print_exec_data(exec_data *data){
-    printf("%%tipo,%%flag,%d,%d,%f,%f,%f",
+    printf("%%flag,%d,%d,%f,%f,%f",
         data->n_thr,
         data->dim,
         data->init,
@@ -261,54 +268,110 @@ double actual_time() {
     return tempo.tv_sec + tempo.tv_nsec/1000000000.0;
 }
 
-/* primeiro argumento: nome do binario
-    segundo argumento: tipo de execucao (1 sequencial, 2 concorrente)
-    terceiro argumento: numero de threads */
 
+/**
+ * @brief Multiplica de forma sequencial a matriz quadrada 'a' pela matriz 'b'
+ * @param a matriz a
+ * @param b matriz b
+ * @param n dimensão das matrizes
+ */
+float *matmul(float *a,float *b,int n){
+    float *c,soma;
+    int i,j,k;
+    c = (float*) malloc(sizeof(float)*n*n);
+    alloc_check(c);
+
+    for ( i = 0; i < n; i++)
+    {
+        for ( j = 0; j < n; j++)
+        {
+            soma = 0;
+            for ( k = 0; k < n; k++)
+                soma += a[i*n + k] * b[k*n+ j];
+            c[i*n + j]=soma;
+        }    
+    }
+
+    return c;
+}
+
+/**
+ * @brief Retorna a matriz m transposta
+ * @param m matriz a ser transposta
+ * @param n dimensão de m
+ * @return matriz m transposta
+ */
+float *transp_mat(float *a, int n,int m){
+    float *resultado;
+    int i,j;
+
+    resultado = (float*)malloc(sizeof(float)*n*m);
+    alloc_check(resultado);
+
+    // fazendo com que as colunas do resultado sejam as linhas de m
+    for ( i = 0; i < n; i++)
+    {
+        for ( j = 0; j < n; j++)
+            resultado[i*n +j] = a[j*n + i];     
+    }
+    // printf("\n\tinvertida:\n");
+    // mat_print(resultado,n); 
+    free(a);   
+    return resultado;
+}
+
+
+/**
+ * @brief calcula e gera dados sobre multiplicacao matricial concorrente/sequencial
+ * @param argc esperado que seja 2, <nome_binario> <numero de threads>
+ * @param argv ./programa <nome_binario> <numero de threads>
+ * @return ojsadoijdfsaiofjsid
+ */
 int main(int argc, char const *argv[])
 {
     float *a,*b,*c;
-    int n,m,n_threads;
+    int n,n_threads;
     double inicio;
-    FILE *f_ptr;
     exec_data data;
-    
     //Inicializacao 
-    c=NULL;
     inicio = actual_time();  
 
-    f_ptr = fopen(argv[1],"r");
-    fread_check(fread(&n,sizeof(int),1,f_ptr));
-    fread_check(fread(&m,sizeof(int),1,f_ptr));
-    b = matvec_bin_reader(f_ptr,&a,n,m);
-    // mat_print(a,n,m);
-    // vec_print(b,n);
-    // puts("\ndados lidos sao os acima\n");
+    n = matmul_bin_reader((char*)argv[1],&a,&b);
+    
     data.dim = n;
-    n_threads = valida_intarg(3,argc,(char**)argv);
+    n_threads = valida_intarg(2,argc,(char**)argv);
     data.n_thr = n_threads;
+    // printf("valor de n = %d\n",n);
+    if(n_threads>1){
+        //inverter matriz... ajuda mto
+        // mat_print(b,n,n);
+        // puts("\ntranspondo b\n");
+        b = transp_mat(b,n,n);
+    }
+    // mat_print(a,n,n);
+    // mat_print(b,n,n);
+    // puts("\nmatriz lidas acima\n");
     data.init = actual_time() - inicio;
-
     //execucao do algoritmo
     inicio = actual_time();
-    // switch(execucao){
-    // case 1:
-    //     data.n_thr=1;
-    //     c = matvet_seq(n,m,a,b);
-    //     break;
-    // case 2:
-        c = matvec_conc(n,m,n_threads,a,b);
-        // break;
-    // }
+    switch(n_threads){
+    case 1:
+        c = matmul(a,b,n);
+        break;
+    default:
+        c = matmul_conc(n,n_threads,a,b);
+        break;
+    }
     data.exec = actual_time() - inicio;
     
     inicio = actual_time();
     free(a);
     free(b);
-    if(c)
-        free(c);
+    free(c);
     data.term = actual_time() - inicio;
     print_exec_data(&data);
+    // puts("\n");
+    // mat_print(c,n,n);
     return 0;
 }
 

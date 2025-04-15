@@ -13,13 +13,12 @@ args = parser.parse_args()
 # "t_inicializacao","t_processamento","t_finalizacao"
 
 flags = ["-O0","-O1", "-O2",  "-O3"]
-dimensoes = [500,1000,2000,5000,10000,20000]
+dimensoes = [50,100,250,500,1000]
 n_threads = list(range(1,args.max_threads + 1))
 execucoes = []
 with open('execucoes.csv', newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        row['tipo_execucao'] = int(row['tipo_execucao'])
         row['n_threads'] = int(row['n_threads'])
         row['dimensao'] = int(row['dimensao'])
         row['t_inicializacao'] = float(row['t_inicializacao'])
@@ -42,7 +41,7 @@ def analise_otimizacao(fazer_grafico):
             #colocar media dos valores 
             flag_execs = [item for item in execucoes if item['flags']==flag and item['dimensao']==dim ]
             valores = [item['t_total'] for item in flag_execs]
-            # print("Valores para flag {} e dimensao {}:{}".format(flag,dim,len(valores)))
+            print("Valores para flag {} e dimensao {}:{}".format(flag,dim,len(valores)))
             data[flag][dim] = sum(valores)/len(valores)
         
         if(fazer_grafico):
@@ -58,7 +57,7 @@ def analise_otimizacao(fazer_grafico):
             plt.legend()
 
     if(fazer_grafico):
-        plt.savefig('graficos_matvet/tempos_nivel_otimizacao.png')
+        plt.savefig('graficos_matmul/tempos_nivel_otimizacao.png')
         plt.close()
 
     media_geral={}
@@ -98,7 +97,7 @@ def analise_exec(execs):
 
     fig.suptitle('Tempos de Execução por Número de Threads (por dimensão)', fontsize=18)
     # fig.subplots_adjust(top=0.93, hspace=0.4)  # espaço vertical extra
-    plt.savefig('graficos_matvet/todos_tempos_execucao.png', dpi=300)
+    plt.savefig('graficos_matmul/todos_tempos_execucao.png', dpi=300)
     plt.close(fig)
 
     graf_aceleracao(dados)
@@ -164,7 +163,7 @@ def cria_grafico_ind_dim(dados,n_dim):
     ax.set_title('Tempos de execuções por número de threads para dimensão = {}'.format(n_dim))
     ax.legend()
 
-    plt.savefig("graficos_matvet/{}.png".format(n_dim))
+    plt.savefig("graficos_matmul/{}.png".format(n_dim))
     plt.close(fig)
     return
 
@@ -201,7 +200,7 @@ def graf_aceleracao(dados):
         plt.title("Aceleração A(n,p), por número de threads")
         plt.legend()
 
-    plt.savefig('graficos_matvet/aceleracao.png')
+    plt.savefig('graficos_matmul/aceleracao.png')
     plt.close()
     return
 
@@ -234,7 +233,7 @@ def graf_eficiencia(dados):
         plt.title("Eficiencia E(n,p), por número de threads")
         plt.legend()
 
-    plt.savefig('graficos_matvet/eficiencia.png')
+    plt.savefig('graficos_matmul/eficiencia.png')
     plt.close()
 
     return
