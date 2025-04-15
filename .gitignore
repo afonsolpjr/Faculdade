@@ -17,8 +17,10 @@ bancodados/202*
 WebDev Course/0.*
 WebDev Course/3.MultiPages/Image
 
-#Ignorando arquivos CSV do portal da transparência
+#Ignorando arquivos CSV de algumas pastas
 202301_Servidores_SIAPE/
+programação Concorrente/**/*.csv
 
+programação Concorrente/**/*.png
 #Ignoring files from the WebDev course exercises.
 *wbdv_ex/

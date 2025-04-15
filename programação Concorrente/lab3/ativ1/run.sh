@@ -32,7 +32,7 @@ atividade1(){
                     done
                 done
             done
-    MELHOR_FLAG=$(python3 analise.py)
+    MELHOR_FLAG=$(python3 analise.py 1 $MAX_T)
     echo -e "\n\tFlag com o menor tempo médio geral: $MELHOR_FLAG"
 }
 
@@ -58,7 +58,8 @@ atividade2(){
             done
         done
     done
-
+    mkdir -p graficos_matvet
+    python3 analise.py 2 $MAX_T
 }
 
 #  objetivo:
@@ -99,10 +100,11 @@ read -p "Insira o numero: " ATIVIDADE
 case $ATIVIDADE in
     1)
         atividade1
-        atividade2
     ;;
 
     2)
+        atividade1
+        atividade2
     ;;
 
     3)
