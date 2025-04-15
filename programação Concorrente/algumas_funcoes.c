@@ -267,25 +267,24 @@ int mat_equal(float **a,float **b,int n){
     return 1;
 }
 
-
 /**
- * @brief 
- * @param n 
+ * @brief Cria duas matrizes quadradas n por n, alocadas continuamente
+ * @param n dimensao da matriz
+ * @param filename nome do arquivo
  */
 void matmul_bin_generator(int n, char filename[]){
 
-    float *a,*b, *c;
-    int i;
+    float *a,*b;
     FILE *ptr_arquivo;
     
     a = random_float_matrix(n,n);
     b = random_float_matrix(n,n);
   
-    c = matmul(a,b,n);
+    // c = matmul(a,b,n);
 
-    // mat_print(a,n);
-    // mat_print(b,n);
-    // mat_print(c,n);
+    // mat_print(a,n,n);
+    // mat_print(b,n,n);
+    // mat_print(c,n,n);
 
     ptr_arquivo = fopen(filename,"w");
     if(!ptr_arquivo){
@@ -295,55 +294,66 @@ void matmul_bin_generator(int n, char filename[]){
 
     fwrite(&n,sizeof(int),1,ptr_arquivo);
     
-    for ( i = 0; i < n; i++)
-        fwrite(a,sizeof(float),n*n,ptr_arquivo);
+    fwrite(a,sizeof(float),n*n,ptr_arquivo);
 
-    for ( i = 0; i < n; i++)
-        fwrite(b,sizeof(float),n*n,ptr_arquivo);
+    fwrite(b,sizeof(float),n*n,ptr_arquivo);
 
-    for ( i = 0; i < n; i++)
-        fwrite(c,sizeof(float),n*n,ptr_arquivo);
+    // for ( i = 0; i < n; i++)
+    //     fwrite(c,sizeof(float),n*n,ptr_arquivo);
 
  
     
     free(a);
     free(b);
-    free(c);
+    // free(c);
     return;
 }
 
-void matmul_bin_reader(char filename[]){
+/**
+ * @brief Lê duas matrizes alocadas continuamente no arquivo de nome filename
+ * @param filename nome do arquivo binario
+ * @param a ponteiro para matriz a
+ * @param b ponteiro para matriz b
+ */
+void matmul_bin_reader(char filename[],float **a, float**b){
     FILE *file_ptr;
-    int n,i;
-    float *a,*b,*c;
+    int n;
 
     file_ptr = fopen(filename,"r");
 
     fread(&n,sizeof(int),1,file_ptr);
     
     /* Se for alocar blocos contiguos */
-
     // a = (float(*)[]) malloc(sizeof(float)*n*n);
     // b = (float*) malloc(sizeof(float)*n*n);
     // c = (float*) malloc(sizeof(float)*n*n);
 
 
-    a = (float*) malloc(sizeof(float)*n*n);
-    alloc_check(a);
-    fread(a,sizeof(float),n*n,file_ptr);
-
-    b = (float*) malloc(sizeof(float)*n*n);
-    alloc_check(b);
-    fread(b,sizeof(float),n*n,file_ptr);
-     
-    c = (float*) malloc(sizeof(float)*n*n);
-    fread(c,sizeof(float),n*n,file_ptr);
+    *a = (float*) malloc(sizeof(float)*n*n);
+    alloc_check(*a);
+    fread(*a,sizeof(float),n*n,file_ptr);
+    mat_print(*a,n,n);
     
-    mat_print(a,n,n);
-    mat_print(b,n,n);
-    mat_print(c,n,n);
+    
+
+    *b = (float*) malloc(sizeof(float)*n*n);
+    alloc_check(*b);
+    fread(*b,sizeof(float),n*n,file_ptr);
+    
+    // printf("\n\tdimensão = %d, a=b? %d\n",n,(*a==*b));
+
+    mat_print(*b,n,n);
+    
+    // c = (float*) malloc(sizeof(float)*n*n);
+    // fread(c,sizeof(float),n*n,file_ptr);
+    
+    // mat_print(a,n,n);
+    // mat_print(b,n,n);
+
+    // mat_print(c,n,n);
     return;
 }
+
 
 /**
  * @brief Retorna o instante de tempo atual em segundos

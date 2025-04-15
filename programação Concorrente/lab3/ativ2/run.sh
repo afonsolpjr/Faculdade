@@ -12,7 +12,6 @@ echo -e "\n\tNumero máximo de threads selecionado = $MAX_T\n"
 
 
 atividade1(){
-    tipo_execucao=2
     echo -e "\n Analisando melhor flag...\n"
     for flag in "${FLAGS[@]}";do
 
@@ -72,52 +71,45 @@ atividade2(){
         # - dimensoes 500 1000 e 2000 (usarei 4 threads em todas)
 gcc -o bin_gen -Wall bin_gen.c
 
+DIMENSOES=( 500 1000 2000 5000 10000 20000 )
+# Gerar dados caso não haja
+mkdir -p binarios
+if [ ! -f "binarios/matmul500.bin" ]; then
+    echo -e "\ngerando matrizes de dimensões..."
+    for dim in "${DIMENSOES[@]}";do
+        echo -n "$dim..."
+        ./bin_gen $dim "binarios/matmul$dim.bin";
+    done
+
+    echo -e "\n\tDados gerados!";
+fi
+
+FLAGS=("-O0" "-O1" "-O2"  "-O3")
+
+MELHOR_FLAG=''
+
 #Criando csv e colunas
 COLUNAS="\"tipo_execucao\",\"flags\",\"n_threads\",\"dimensao\",\"t_inicializacao\",\"t_processamento\",\"t_finalizacao\""
 if [ ! -f execucoes.csv ]; then
     echo $COLUNAS >> execucoes.csv
 fi
 
-DIMENSOES=( 500 1000 2000 5000 10000 20000 )
-# Gerar dados caso não haja
-if [ ! -f "matvet500.bin" ]; then
-    echo -e "\ngerando dados de dimensões..."
-    for dim in "${DIMENSOES[@]}";do
-        echo -n "$dim..."
-        ./bin_gen $dim $dim "matvet$dim.bin";
-    done
-
-    echo -e "\n\tDados gerados!";
-fi
-
-TIPOS_EXECUCAO=(2)
-FLAGS=("-O0" "-O1" "-O2"  "-O3")
-
-MELHOR_FLAG=''
-
 echo -e "\nQual atividade executar? (1,2,3,4)\n"
 read -p "Insira o numero: " ATIVIDADE
 
-case $ATIVIDADE in
-    1)
-        atividade1
-    ;;
+# case $ATIVIDADE in
+#     1)
+#         atividade1
+#     ;;
 
-    2)
-        atividade2
-    ;;
+#     2)
+#         atividade2
+#     ;;
 
-    3)
-    ;;
+#     3)
+#     ;;
 
-    4)
-    ;;
-esac
+#     4)
+#     ;;
+# esac
 exit 0
-# gcc -o matvet -Wall matvet.c
-# ./matvet matvet500.bin 2 1
-
-# execucoes sequenciais
-
-# execucoes concorrentes
-

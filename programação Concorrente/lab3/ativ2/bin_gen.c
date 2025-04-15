@@ -76,56 +76,92 @@ void mat_print(float *mat, int n, int m)
 }
 
 
-void matvec_bin_generator(int n, int m, char filename[]){
+
+/**
+ * @brief Cria duas matrizes quadradas n por n, alocadas continuamente
+ * @param n dimensao da matriz
+ * @param filename nome do arquivo
+ */
+void matmul_bin_generator(int n, char filename[]){
+
     float *a,*b;
-    FILE *f_ptr;
-
-    a = random_float_matrix(n,m);
-    b = random_float_array(m);
-
-    // mat_print(a,n,m);
-    // vec_print(b,m);
+    FILE *ptr_arquivo;
     
-    f_ptr = fopen(filename,"w");
+    a = random_float_matrix(n,n);
+    b = random_float_matrix(n,n);
+  
+    // c = matmul(a,b,n);
 
-    fwrite(&n,sizeof(int),1,f_ptr);
-    fwrite(&m,sizeof(int),1,f_ptr);
+    // mat_print(a,n,n);
+    // mat_print(b,n,n);
+    // mat_print(c,n,n);
 
-    //escrever matriz
-    fwrite(a,sizeof(float),m*n,f_ptr);
-    fwrite(b,sizeof(float),m,f_ptr);
+    ptr_arquivo = fopen(filename,"w");
+    if(!ptr_arquivo){
+        printf("Erro na criação de arquivo.\n");
+        exit(1);
+    }
 
-    fclose(f_ptr);
-    //escrever vetor
+    fwrite(&n,sizeof(int),1,ptr_arquivo);
+    
+    fwrite(a,sizeof(float),n*n,ptr_arquivo);
 
+    fwrite(b,sizeof(float),n*n,ptr_arquivo);
+
+    // for ( i = 0; i < n; i++)
+    //     fwrite(c,sizeof(float),n*n,ptr_arquivo);
+
+ 
+    
+    free(a);
+    free(b);
+    // free(c);
     return;
 }
 
 /**
- * @brief Lê do descrito de arquivo f_ptr, e carrega a matriz mat,e o vetor vec
- * @param f_ptr Descritor de arquivo já aberto
- * @param mat ponteiro para o vetor a ser populado como a matriz
- * @param n numero de linhas da matriz
- * @param m numero de colunas da matriz
- * @return retorna o vetor vec
+ * @brief Lê duas matrizes alocadas continuamente no arquivo de nome filename
+ * @param filename nome do arquivo binario
+ * @param a ponteiro para matriz a
+ * @param b ponteiro para matriz b
  */
-float *matvec_bin_reader(FILE *f_ptr,float **mat, int n,int m){
-    float *vec;
+void matmul_bin_reader(char filename[],float **a, float**b){
+    FILE *file_ptr;
+    int n;
 
-    *mat = (float*) malloc(sizeof(float)*n*m);
-    alloc_check((void*)*mat);
+    file_ptr = fopen(filename,"r");
 
-    vec = (float*)malloc(sizeof(float)*m);
-    alloc_check((void*)vec);
+    fread(&n,sizeof(int),1,file_ptr);
+    
+    /* Se for alocar blocos contiguos */
+    // a = (float(*)[]) malloc(sizeof(float)*n*n);
+    // b = (float*) malloc(sizeof(float)*n*n);
+    // c = (float*) malloc(sizeof(float)*n*n);
 
-    fread(*mat,sizeof(float),n*m,f_ptr);
-    fread(vec,sizeof(float),m,f_ptr);
 
-    fclose(f_ptr);
+    *a = (float*) malloc(sizeof(float)*n*n);
+    alloc_check(*a);
+    fread(*a,sizeof(float),n*n,file_ptr);
+    mat_print(*a,n,n);
+    
+    
 
-    // mat_print(*mat,n,m);
-    // vec_print(vec,m);
-    return vec;
+    *b = (float*) malloc(sizeof(float)*n*n);
+    alloc_check(*b);
+    fread(*b,sizeof(float),n*n,file_ptr);
+    
+    // printf("\n\tdimensão = %d, a=b? %d\n",n,(*a==*b));
+
+    mat_print(*b,n,n);
+    
+    // c = (float*) malloc(sizeof(float)*n*n);
+    // fread(c,sizeof(float),n*n,file_ptr);
+    
+    // mat_print(a,n,n);
+    // mat_print(b,n,n);
+
+    // mat_print(c,n,n);
+    return;
 }
 
 int valida_intarg(int pos, int argc, char *argv[])
@@ -150,15 +186,21 @@ int valida_intarg(int pos, int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    int n,m;
+    int n;
+    // float *a,*b;
+
     srand(time(NULL));
-
+    /* Argumentos esperados */
     n = valida_intarg(1,argc,argv);
-    m = valida_intarg(2,argc,argv);
 
 
-    matvec_bin_generator(n,m,argv[3]);
+    matmul_bin_generator(n,argv[2]);
+
     // puts("\nbinário gerado com dados acima\n");
-    // matvec_bin_reader(argv[1],&mat);    
+
+    // matmul_bin_reader(argv[2],&a,&b);
+    // mat_print(a,n,n);
+    // mat_print(b,n,n);
+
     return 0;
 }
