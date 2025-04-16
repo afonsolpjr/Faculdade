@@ -37,6 +37,8 @@ atividade1(){
 }
 
 atividade2(){
+    MELHOR_FLAG=$(python3 analise.py 3 $MAX_T)
+
     COMANDO="gcc $MELHOR_FLAG -o matmul -Wall matmul.c";
     $COMANDO;
     echo -e "\n Gerando dados para....\n"
@@ -46,7 +48,7 @@ atividade2(){
             # programa <nome binario> <tipo execucao> <n threads>
             NOME_BIN="binarios/matmul$dim.bin"
             COMANDO="./matmul $NOME_BIN $n_threads"
-            printf "\rDimensao: %d | Numero de Threads: %d" "$dim" "$n_threads"
+            printf "\rDimensao: %d | Numero de Threads: %d  " "$dim" "$n_threads"
 
             for ((i=1;i<=10;i++));do
                 OUTPUT=$($COMANDO)
@@ -59,8 +61,9 @@ atividade2(){
         done
     done
     mkdir -p graficos_matmul
-    echo -e "\n\t maximo threads = $MAX_T"
+    # echo -e "\n\t maximo threads = $MAX_T"
     python3 analise.py 2 $MAX_T
+    echo -e "\n\tgraficos gerados!"
 }
 
 #  objetivo:
