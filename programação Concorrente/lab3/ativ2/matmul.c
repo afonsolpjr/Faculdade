@@ -341,27 +341,28 @@ int main(int argc, char const *argv[])
     data.dim = n;
     n_threads = valida_intarg(2,argc,(char**)argv);
     data.n_thr = n_threads;
-    // printf("valor de n = %d\n",n);
-    if(n_threads>1){
+    // if(n_threads>1){
         //inverter matriz... ajuda mto
         // mat_print(b,n,n);
         // puts("\ntranspondo b\n");
         b = transp_mat(b,n,n);
-    }
+    // }
+
     // mat_print(a,n,n);
     // mat_print(b,n,n);
     // puts("\nmatriz lidas acima\n");
+
     data.init = actual_time() - inicio;
     //execucao do algoritmo
     inicio = actual_time();
-    switch(n_threads){
-    case 1:
-        c = matmul(a,b,n);
-        break;
-    default:
+    // switch(n_threads){
+    // case 1:
+        // c = matmul(a,b,n);
+        // break;
+    // default:
         c = matmul_conc(n,n_threads,a,b);
-        break;
-    }
+        // break;
+    // }
     data.exec = actual_time() - inicio;
     
     inicio = actual_time();
