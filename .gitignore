@@ -1,7 +1,8 @@
 # Tipos de arquivo gerais a serem ignorados
 **/a.exe
 /a.out
-teste*
+teste.*
+teste
 *.class
 *.zip
 *.exe
