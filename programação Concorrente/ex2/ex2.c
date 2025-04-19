@@ -85,24 +85,22 @@ int main(int argc, char const *argv[])
     int n_thr,num_primos;
     long long int n,i;
     pthread_t *t_ids;
-    FILE *gabarito;
 
     n_thr = valida_intarg(1,argc,(char**)argv);
+
+    
     if(argc<2 || !(n = atoll(argv[2]))){
         printf("Insira o tamanho da série como o segundo argumento.\n");
         exit(1);
     }
 
-    // printf("n_thr:%d\nn:%lld\n",n_thr,n);
-    gabarito = fopen("gabarito.bin",'w');
-    alloc_check(gabarito);
+    printf("n_thr:%d\nn:%lld\n",n_thr,n);
 
     for ( i = 0; i < n; i++)
         if(ehPrimo(i)){
             printf("%lld ",i);}
     // puts("\n");
 
-    // fclose(gabarito);
 
     t_ids = (pthread_t*) malloc(sizeof(pthread_t)*n_thr);
     alloc_check(t_ids);
