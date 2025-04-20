@@ -2,29 +2,33 @@
 nome_gabarito="gabarito.txt"
 
 cria_gabarito(){
-    # echo -e "Criando gabarito....\n"
+    # echo -e "Criando gabarito com primos até $1....\n"
     truncate -s 0 $nome_gabarito
-    seq 1 $1 | factor | awk 'NF==2 {print $1}' | sed 's/:/''/' >> $nome_gabarito
-    # echo -e "Gabarito criado\n"
+    seq 1 $(($1-1)) | factor | awk 'NF==2 {print $1}' | sed 's/://' >> $nome_gabarito
+    # echo "Gabarito criado"; cat $nome_gabarito; echo -e "\n"
 }
 
 # Espera a saída do programa como argumento
 checa_gabarito(){
 
-# Run the C program and process its output line by line
-./teste 1 $1 | while read -r number; do
-    # Check if the number exists in the prime file
-    if grep -Fxq "$number" "$PRIME_FILE"; then
-        echo "$number is in the prime list."
+    # Gera a saída do programa e compara com o gabarito
+    if diff <(./teste 1 $1) $nome_gabarito >/dev/null; then
+        echo "Gabarito OK: A saída do programa está correta."
     else
-        echo "$number is NOT in the prime list."
+        echo "Gabarito NÃO está OK: A saída do programa não corresponde ao gabarito."
         exit 1
     fi
-done
-
 }
 
 gcc ex2.c -o teste -Wall -lm 
 cria_gabarito $1
+checa_gabarito $1
 
-checa_gabarito
+
+# ./teste 1 50 | while read -r number;do 
+#     if grep -q $number gabarito.txt
+#         then echo "oi"
+#     else 
+#         echo "asdiufasf $number"
+#     fi
+# done

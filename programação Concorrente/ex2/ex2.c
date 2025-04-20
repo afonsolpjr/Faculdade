@@ -82,7 +82,7 @@ void * checa_n(void *arg){
 
 int main(int argc, char const *argv[])
 {
-    int n_thr,num_primos;
+    int n_thr;
     long long int n,i;
     pthread_t *t_ids;
 
@@ -94,11 +94,9 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
-    printf("n_thr:%d\nn:%lld\n",n_thr,n);
-
-    for ( i = 0; i < n; i++)
-        if(ehPrimo(i)){
-            printf("%lld ",i);}
+    // for ( i = 0; i < n; i++)
+    //     if(ehPrimo(i)){
+    //         printf("%lld ",i);}
     // puts("\n");
 
 
