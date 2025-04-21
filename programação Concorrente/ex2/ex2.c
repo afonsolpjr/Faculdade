@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
+#include <time.h>
 
 long long int numero;
 pthread_mutex_t mutex;
@@ -62,44 +63,35 @@ void alloc_check(void *ptr)
 void * checa_n(void *arg){
     long long int *n = (long long int*) arg;
     long long int atual;
+    long int n_primos;
 
     // printf("[debug thread]\n"
     //     "\tn=%lld\n"
     //     "\tnumero=%lld\n",*n,numero);
     
+    n_primos=0;
+
     while(numero<*n){
         pthread_mutex_lock(&mutex);
         atual = numero++;
         pthread_mutex_unlock(&mutex);
-        if(ehPrimo(atual))
-            printf("%lld\n",atual);
+        if(ehPrimo(atual)){
+            // printf("%lld\n",atual);
+            n_primos++;}
     }
-
-    return (void*) n;
+    // printf("%lld primos encontrados.\n",n_primos);
+    pthread_exit((void*) n_primos);
+    return NULL;
 }
 
-/* argumentos: <numero de threads> <numero de elementos> <nome-arquivo-gabarito> */
+int conc_main(int n_thr,long long int n,pthread_t **pt_ids){
 
-int main(int argc, char const *argv[])
-{
-    int n_thr;
-    long long int n,i;
+    long long int i;
+    long int retorno,resultado;
     pthread_t *t_ids;
 
-    n_thr = valida_intarg(1,argc,(char**)argv);
 
-    
-    if(argc<2 || !(n = atoll(argv[2]))){
-        printf("Insira o tamanho da série como o segundo argumento.\n");
-        exit(1);
-    }
-
-    // for ( i = 0; i < n; i++)
-    //     if(ehPrimo(i)){
-    //         printf("%lld ",i);}
-    // puts("\n");
-
-
+    t_ids = *pt_ids;
     t_ids = (pthread_t*) malloc(sizeof(pthread_t)*n_thr);
     alloc_check(t_ids);
     numero = 0;
@@ -114,15 +106,91 @@ int main(int argc, char const *argv[])
         }
     }
     
-    
+    resultado = 0;
     for ( i = 0; i < n_thr; i++)
     {
-        if(pthread_join(t_ids[i],NULL)){
+        if(pthread_join(t_ids[i],(void**)&retorno)){
             printf("erro no retorno da thread %lld",i);
             exit(1);
         }
+        resultado += retorno;
     }
     
-    
+    return resultado;
+}
+typedef struct{
+    double init, exec, term;
+    int dim,n_thr;
+}exec_data;
+
+
+/**
+ * @brief Printa dados da execucao
+ * @param data 
+ */
+void store_exec_data(exec_data *data, char* filename){
+    FILE *data_file;
+    data_file = fopen(filename,"a");
+    if(data_file==NULL){
+        printf("Erro ao abrir o arquivo de dados.\n");
+        exit(1);
+    }
+    fprintf(data_file,"%%flag,%d,%d,%f,%f,%f\n",
+        data->n_thr,
+        data->dim,
+        data->init,
+        data->exec,
+        data->term);
+    fclose(data_file);
+    return;
+}       
+ 
+double actual_time() {
+    struct timespec tempo;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &tempo);
+    return tempo.tv_sec + tempo.tv_nsec/1000000000.0;
+}
+
+/* argumentos: <numero de threads> <numero de elementos> <nome-arquivo-dados> */
+
+int main(int argc, char const *argv[])
+{
+    int n_thr;
+    double tempo;
+    long long int n;
+    long int resultado;
+    pthread_t *t_ids = NULL;
+    exec_data data;
+
+    tempo = actual_time();
+
+    n_thr = valida_intarg(1,argc,(char**)argv);
+    if(argc<2 || !(n = atoll(argv[2]))){
+        printf("Insira o tamanho da série como o segundo argumento.\n");
+        exit(1);
+    }
+    if(argc<3){
+        printf("Insira o nome do arquivo de dados como o terceiro argumento.\n");
+        exit(1);
+    }
+
+    data.n_thr=n_thr;
+    data.dim=n;
+    data.init = actual_time() - tempo;
+    tempo = actual_time();
+    resultado = conc_main(n_thr,n,&t_ids);
+    data.exec = actual_time() - tempo;
+    tempo = actual_time();
+    // for ( i = 0; i < n; i++)
+    //     if(ehPrimo(i)){
+    //         printf("%lld ",i);}
+    // puts("\n");
+
+    if(t_ids!=NULL)
+        free(t_ids);
+    printf("%ld\n",resultado);
+    pthread_mutex_destroy(&mutex);
+    data.term = actual_time() - tempo;
+    store_exec_data(&data,(char*)argv[3]);
     return 0;
 }
