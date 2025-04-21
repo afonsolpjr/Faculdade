@@ -68,7 +68,7 @@ De qualquer forma segue lista de comandos utilizados:
  4. Números de threads testadas: 1,2,3 e 4
  5. Número de execuções por valor de n & número de threads: 10
 
-Observações e descrição das  tarefas do script:
+# Observações e descrição das  tarefas do script:
 1. O script pode receber como argumento, opcionalmente, o número máximo de threads a serem executadas (ele executará o programa com threads de 1 até o valor enviado). Por padrão o número máximo de threads é 4.
 2. Determina os valores de N a serem testados, na lista "DIMENSOES".
 3. Assegura criação do arquivo "dados.csv", que conterá dados de execução.
