@@ -1,5 +1,5 @@
 
-A geração e análise dos dados, assim como a criação dos gráficos, são orquestradas pelo bash script run.sh. 
+A geração e análise dos dados, assim como a criação dos gráficos, são orquestradas pelo bash script "run.sh". 
 O programa está em C, como determinado, e a análise e criação dos gráficos é feita em python.
 A execução do script por si só é suficiente para todas as etapas.
 
