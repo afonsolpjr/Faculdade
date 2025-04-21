@@ -697,6 +697,29 @@ float * matvec_conc(int n,int m,int n_threads,float *a,float *b){
     
 }
 
+/**
+ * @brief Guarda dados da execucao em um arquivo.
+ * @param data ponteiro para a estrutura de dados
+ * @param filename nome do arquivo
+ * @return void
+ */
+void store_exec_data(exec_data *data, char* filename){
+    FILE *data_file;
+    data_file = fopen(filename,"a");
+    if(data_file==NULL){
+        printf("Erro ao abrir o arquivo de dados.\n");
+        exit(1);
+    }
+    fprintf(data_file,"%%flag,%d,%d,%f,%f,%f\n",
+        data->n_thr,
+        data->dim,
+        data->init,
+        data->exec,
+        data->term);
+    fclose(data_file);
+    return;
+}       
+
 
 int main(int argc, char *argv[])
 {

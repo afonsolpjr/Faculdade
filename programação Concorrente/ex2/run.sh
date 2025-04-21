@@ -5,11 +5,14 @@ FLAGS=("-O0" "-O1" "-O2" "-O3")
 DIMENSOES=(100 1000 10000 100000 1000000 10000000)
 MELHOR_FLAG=""
 GABARITO=""
+
+
 cria_gabarito(){
     # Calcula o número de primos até $1 e armazena em uma variável
     GABARITO=$(seq 1 $(($1-1)) | factor | awk 'NF==2 {print $1}' | wc -l)
     # echo "Número de primos até $1: $num_linhas_gabarito"
 }
+
 # Recebe o número de primos como argumento (saída do programa)
 checa_gabarito(){
 
@@ -29,7 +32,7 @@ checa_flag(){
         $COMANDO;
 
         for dim in "${DIMENSOES[@]}";do
-            printf "\rGerando gabarito para n=%d" "$dim"
+            printf "\r[Gerando gabarito para n=%d]" "$dim"
             cria_gabarito $dim
             printf "\rTestando para [Flag: %s  |  N= %d]" "$flag" "$dim"
             # programa <nome binario> <tipo execucao> <n threads>

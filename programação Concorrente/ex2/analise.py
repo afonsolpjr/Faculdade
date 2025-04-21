@@ -43,14 +43,12 @@ def analise_otimizacao(fazer_grafico):
             # print("Valores para flag {} e dimensao {}:{}".format(flag,dim,len(valores)))
             data[flag][dim] = sum(valores)/len(valores)
         
-        if(fazer_grafico):
-            plt.scatter(list(data[flag].keys()),list(data[flag].values()),
-                        marker='.')
-            plt.plot(list(data[flag].keys()),list(data[flag].values()),
-                        label=flag,
-                        linestyle='dotted')
+        if fazer_grafico:
+            plt.scatter(data[flag].keys(), data[flag].values(), marker='.')
+            plt.plot(data[flag].keys(), data[flag].values(), label=flag, linestyle='dotted')
             
-            plt.xlabel("Valor de n")
+            plt.xscale('log')
+            plt.xlabel("Valores de n em escala logarítmica $10^x$")
             plt.ylabel("Tempo médio de execução em segundos")
             plt.title("Tempo médio de execução por valor de n e nível de otimização")
             plt.legend()

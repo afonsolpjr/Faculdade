@@ -129,8 +129,10 @@ typedef struct{
 
 
 /**
- * @brief Printa dados da execucao
- * @param data 
+ * @brief Guarda dados da execucao em um arquivo.
+ * @param data ponteiro para a estrutura de dados
+ * @param filename nome do arquivo
+ * @return void
  */
 void store_exec_data(exec_data *data, char* filename){
     FILE *data_file;
@@ -166,8 +168,9 @@ int main(int argc, char const *argv[])
     pthread_t *t_ids = NULL;
     exec_data data;
 
+    // Inicializacao
     tempo = actual_time();
-
+    
     n_thr = valida_intarg(1,argc,(char**)argv);
     if(argc<2 || !(n = atoll(argv[2]))){
         printf("Insira o tamanho da série como o segundo argumento.\n");
@@ -181,15 +184,14 @@ int main(int argc, char const *argv[])
     data.n_thr=n_thr;
     data.dim=n;
     data.init = actual_time() - tempo;
+    
+    // Execucao
     tempo = actual_time();
     resultado = conc_main(n_thr,n,&t_ids);
     data.exec = actual_time() - tempo;
-    tempo = actual_time();
-    // for ( i = 0; i < n; i++)
-    //     if(ehPrimo(i)){
-    //         printf("%lld ",i);}
-    // puts("\n");
 
+    // Finalizacao
+    tempo = actual_time();
     if(t_ids!=NULL)
         free(t_ids);
     printf("%ld\n",resultado);
