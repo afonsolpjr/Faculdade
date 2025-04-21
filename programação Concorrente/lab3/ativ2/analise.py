@@ -39,7 +39,7 @@ def analise_otimizacao(fazer_grafico):
         data[flag]= {}
         for dim in dimensoes:
             #colocar media dos valores 
-            flag_execs = [item for item in execucoes if item['flags']==flag and item['dimensao']==dim ]
+            flag_execs = [item for item in execucoes if item['flags']==flag and item['dimensao']==dim and item['n_threads'] == 1]
             valores = [item['t_total'] for item in flag_execs]
             # print("Valores para flag {} e dimensao {}:{}".format(flag,dim,len(valores)))
             data[flag][dim] = sum(valores)/len(valores)

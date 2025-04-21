@@ -60,7 +60,7 @@ void alloc_check(void *ptr)
 }
 
 
-void * checa_n(void *arg){
+void * conc_factor(void *arg){
     long long int *n = (long long int*) arg;
     long long int atual;
     long int n_primos;
@@ -71,13 +71,17 @@ void * checa_n(void *arg){
     
     n_primos=0;
 
-    while(numero<*n){
+    while(1){
         pthread_mutex_lock(&mutex);
         atual = numero++;
         pthread_mutex_unlock(&mutex);
-        if(ehPrimo(atual)){
+
+        if(atual>=*n)
+            break;
+        else if(ehPrimo(atual)){
             // printf("%lld\n",atual);
-            n_primos++;}
+            n_primos++;
+        }
     }
     // printf("%lld primos encontrados.\n",n_primos);
     pthread_exit((void*) n_primos);
@@ -100,7 +104,7 @@ int conc_main(int n_thr,long long int n,pthread_t **pt_ids){
     for ( i = 0; i < n_thr; i++)
     {
         // printf("%lld,%lld\n",n,numero);
-        if(pthread_create(&t_ids[i],NULL,checa_n,(void *)&n)){
+        if(pthread_create(&t_ids[i],NULL,conc_factor,(void *)&n)){
             printf("erro na criação da thread [%lld]\n",i);
             exit(1);
         }

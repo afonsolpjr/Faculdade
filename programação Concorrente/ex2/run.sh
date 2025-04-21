@@ -16,13 +16,13 @@ checa_gabarito(){
     num_linhas_saida=$1
     # echo "Número de primos na saída do programa: $num_linhas_saida"
     if [ "$num_linhas_saida" -ne "$GABARITO" ]; then
-        echo "Gabarito NÃO está OK: O número de primos não corresponde ao esperado."
+        echo "\nGabarito NÃO está OK: O número de primos não corresponde ao esperado."
         exit 1
     fi
 }
 
 checa_flag(){
-    echo -e "\n Gerando dados para analisar melhor flag...\n"
+    echo -e "\nGerando dados para analisar melhor flag...\n"
     for flag in "${FLAGS[@]}";do
 
         COMANDO="gcc ex2.c -o primetest -Wall -lm $flag";
@@ -35,7 +35,7 @@ checa_flag(){
             # programa <nome binario> <tipo execucao> <n threads>
             COMANDO="./primetest 1 $dim $DATA_FILE"
             # echo "$COMANDO"
-            for ((i=1;i<=1;i++));do
+            for ((i=1;i<=10;i++));do
                 checa_gabarito $($COMANDO)
             done
         done
@@ -50,7 +50,7 @@ gera_dados(){
 
     COMANDO="gcc ex2.c -o primetest -Wall -lm $MELHOR_FLAG";
     $COMANDO;
-    echo -e "\n Gerando dados para....\n"
+    echo -e "\nGerando dados para....\n"
     for dim in "${DIMENSOES[@]}";do
         printf "\rGerando gabarito para n=%d" "$dim"
         cria_gabarito $dim
@@ -91,7 +91,12 @@ if [ ! -f $DATA_FILE ]; then
     echo "\"flag\",\"n_threads\",\"dimensao\",\"t_init\",\"t_exec\",\"t_fin\"" >> $DATA_FILE
 fi
 
-
-checa_flag
+awk -F',' 'NR > 1 {count[$1]++} END {if (NR == 1) {print "Nenhuma linha de dados encontrada"; exit 1} for (flag in count) {if (count[flag] < 10) {print flag, count[flag]; found=1}} if (!found) print "Foram encontrados dados suficientes para encontrar a melhor flag"}' $DATA_FILE
+if [ ! $? -eq 0 ];then
+    checa_flag
+else    
+    MELHOR_FLAG=$(python3 analise.py 1 $MAX_T)
+    echo -e "\n\tMelhor flag encontrada: $MELHOR_FLAG\n"
+fi
 gera_dados
 analisa_dados
