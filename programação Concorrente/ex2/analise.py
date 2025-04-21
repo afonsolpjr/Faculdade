@@ -159,7 +159,7 @@ def cria_grafico_ind_dim(dados,n_dim):
 
         ax.bar_label(p, label_type='center')
 
-    ax.set_title('Tempos de execuções por número de threads para dimensão = {}'.format(n_dim))
+    ax.set_title('Tempos de execução por número de threads para N = {}'.format(n_dim))
     ax.legend()
 
     plt.savefig("graficos_nprimos/{}.png".format(n_dim))
