@@ -97,6 +97,7 @@ fi
 awk -F',' 'NR > 1 {count[$1]++} END {if (NR == 1) {print "Nenhuma linha de dados encontrada"; exit 1} for (flag in count) {if (count[flag] < 10) {print flag, count[flag]; found=1}} if (!found) print "Foram encontrados dados suficientes para encontrar a melhor flag"}' $DATA_FILE
 if [ ! $? -eq 0 ];then
     checa_flag
+    echo -e "\n\tMelhor flag encontrada: $MELHOR_FLAG\n"
 else    
     MELHOR_FLAG=$(python3 analise.py 1 $MAX_T)
     echo -e "\n\tMelhor flag encontrada: $MELHOR_FLAG\n"

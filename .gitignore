@@ -21,7 +21,9 @@ WebDev Course/3.MultiPages/Image
 #Ignorando arquivos CSV de algumas pastas
 202301_Servidores_SIAPE/
 programação Concorrente/**/*.csv
+programação Concorrente/**/cods-* 
 
+programação Concorrente/**/*.pdf 
 programação Concorrente/**/*.png
 #Ignoring files from the WebDev course exercises.
 *wbdv_ex/
