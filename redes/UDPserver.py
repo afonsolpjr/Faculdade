@@ -5,6 +5,7 @@ serverSocket.bind(('', serverPort))
 print("The server is ready to receive")
 while True:
     message, clientAddress = serverSocket.recvfrom(2048)
-    modifiedMessage = message.decode().upper()
+    print(f"Received message from {clientAddress}: {message.decode()}")
+    modifiedMessage = message.decode().upper() + " - obrigado"
     serverSocket.sendto(modifiedMessage.encode(),
     clientAddress)
