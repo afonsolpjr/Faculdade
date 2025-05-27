@@ -15,7 +15,7 @@ primos_encontrados=$(echo $saida |grep -oP '\d+$')
 gabarito=$(seq 1 $1 | factor | grep -cP "^(\d+): \1")
 
 if [ "$primos_encontrados" -ne "$gabarito" ];then
-    echo "Gabarito NÃO está OK: O número de primos não corresponde ao esperado."
+    echo "Gabarito NÃO CONFERE: O número de primos não corresponde ao esperado."
     exit 1
 else
     echo "O número de primos corresponde ao esperado."

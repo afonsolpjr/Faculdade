@@ -93,7 +93,7 @@ void *producer_routine(void *arg)
     return NULL;
 }
 
-void *thr_primetest(void *arg)
+void *consumer_routine(void *arg)
 {
     long long item, score = 0;
 
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
     for (i = 0; i < n_threads; i++)
     {
         // criar threads
-        if (pthread_create(&t_ids[i], NULL, thr_primetest, NULL))
+        if (pthread_create(&t_ids[i], NULL, consumer_routine, NULL))
         {
             printf("Erro na criação da thread %d\n", i);
             exit(1);
