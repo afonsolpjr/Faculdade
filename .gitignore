@@ -1,4 +1,10 @@
+# Ignorando o que não tem extensão (provavelmente binarios)
+*
+!/**/
+!*.*
+
 # Tipos de arquivo gerais a serem ignorados
+**/*.png
 **/a.exe
 /a.out
 teste.*
@@ -17,13 +23,13 @@ __pycache__/
 bancodados/202*
 WebDev Course/0.*
 WebDev Course/3.MultiPages/Image
+**/programação Concorrente/**/cods-* 
 
-#Ignorando arquivos CSV de algumas pastas
+#Ignorando arquivos CSV e outros formatos, de algumas pastas
 202301_Servidores_SIAPE/
-programação Concorrente/**/*.csv
-programação Concorrente/**/cods-* 
+**/programação Concorrente/**/*.csv
+**/programação Concorrente/**/*.pdf 
+**/programação Concorrente/**/*.png
 
-programação Concorrente/**/*.pdf 
-programação Concorrente/**/*.png
 #Ignoring files from the WebDev course exercises.
 *wbdv_ex/
