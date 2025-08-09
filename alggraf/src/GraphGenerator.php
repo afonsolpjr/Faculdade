@@ -1,5 +1,9 @@
 <?php
 
+namespace AlgGraph;
+use SplDoublyLinkedList;
+use SplFixedArray;
+
 
 class GraphGenerator{
 

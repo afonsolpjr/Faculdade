@@ -17,6 +17,9 @@ teste
 ModMat/*.gif
 ModMat/*.png
 *.vscode/
+**/composer.lock
+**/.phpunit.result.cache
+
 # Pastas a serem ignoradas
 __pycache__/
 *ipynb_checkpoints/
@@ -24,7 +27,7 @@ bancodados/202*
 WebDev Course/0.*
 WebDev Course/3.MultiPages/Image
 **/programação Concorrente/**/cods-* 
-
+**/vendor/*
 #Ignorando arquivos CSV e outros formatos, de algumas pastas
 202301_Servidores_SIAPE/
 **/programação Concorrente/**/*.csv
