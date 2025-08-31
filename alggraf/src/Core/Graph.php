@@ -1,7 +1,8 @@
 <?php
 
-namespace AlgGraph;
+namespace AlgGraph\Core;
 use SplFixedArray;
+use Vertex;
 
 class Graph
 {
@@ -13,9 +14,12 @@ class Graph
     public $n;
     public $m;
 
+    public array $vertices;
+
     public function __construct(
         SplFixedArray $adj_matrix,
         ?array $adj_list,
+        array $vertices,
         bool $directed = false
     ) {
         $this->adj_matrix = $adj_matrix;
@@ -25,8 +29,7 @@ class Graph
         $this->directed = $directed;
         $this->n = count($adj_matrix);
         $this->count_edges();
-
-
+        $this->vertices = $vertices;
     }
 
 
@@ -60,10 +63,12 @@ class Graph
     {
         $adj_matrix[$v1][$v2] = 1;
         $this->adj_list[$v1]->push($v2);
-        
+
+        $this->vertices[$v1]->add_neighbor($this->vertices[$v2]);
         if($this->directed)
             return;
 
+        $this->vertices[$v2]->add_neighbor($this->vertices[$v1]);
         $adj_matrix[$v2][$v1] = 1;
         $this->adj_list[$v2]->push($v1);
     }
@@ -72,28 +77,24 @@ class Graph
     {
         $this->adj_matrix[$v1][$v2] = 0;
         
-        $list = $this->adj_list[$v1];
-        $list->rewind();
-        while($list->valid())
-        {
-            if( $list->current() == $v2 )
-                $list->offsetUnset($list->key());
-            $list->next();
-        }
+        $key = array_search($v2,$this->adj_list[$v1]);
 
+        if($key !== false)
+            unset($this->adj_list[$v1][$key]);
+        
+        $this->adj_list[$v1] = array_values($this->adj_list[$v1]);
         
         if($this->directed)
             return;
 
         $this->adj_matrix[$v2][$v1] = 0;
-        $list = $this->adj_list[$v2];
-        $list->rewind();
-        while($list->valid())
-        {
-            if( $list->current() == $v2 )
-                $list->offsetUnset($list->key());
-            $list->next();
-        }
+        $key = array_search($v1,$this->adj_list[$v2]);
+
+        if($key !== false)
+            unset($this->adj_list[$v2][$key]);
+        
+        $this->adj_list[$v2] = array_values($this->adj_list[$v2]);
+        
     }
 
     public function test_adj($v1,$v2): bool
@@ -105,7 +106,7 @@ class Graph
     {
         $this->m=0;
         foreach($this->adj_list as $list)
-            $this->m += $list->count();
+            $this->m += count($list);
     }
 
     public function nodes()

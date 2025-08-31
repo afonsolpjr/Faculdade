@@ -1,9 +1,7 @@
 <?php
 
-namespace AlgGraph;
-use SplDoublyLinkedList;
+namespace AlgGraph\Core;
 use SplFixedArray;
-
 
 class GraphGenerator{
 
@@ -40,16 +38,26 @@ class GraphGenerator{
         return $mat;
     }
 
+
+    private function create_vertices(SplFixedArray $mat): array{
+
+        $vertices=[];
+        for($i=0; $i<$mat->count(); $i++)
+            $vertices[] = new Vertex($i);
+
+        return $vertices;
+    }
+
     public function adjmat_to_list(SplFixedArray $mat): array
     {
         $list = [];
 
         for ($i = 0; $i < $mat->count(); $i++) {
-            array_push($list, new SplDoublyLinkedList());
+            $list[$i] = [];
 
             for ($j = 0; $j < $mat->count(); $j++) {
                 if ($mat[$i][$j])
-                    $list[$i]->push($j);
+                    array_push($list[$i],$j);
             }
         }
 
@@ -59,8 +67,23 @@ class GraphGenerator{
     public function get_random_graph(int $size, bool $directed = false) : Graph
     {
         $mat = $this->random_adj_matrix($size,$directed);
-        return new Graph($mat,$this->adjmat_to_list($mat),$directed);
+        return $this->get_graph($mat,$directed);
     }
+
+    public function get_graph(SplFixedArray|array $adj_matrix, bool $directed): Graph
+    {
+
+        $vertices = $this->create_vertices($adj_matrix);
+        $adj_list = $this->adjmat_to_list($adj_matrix);
+
+        for($i=0; $i<count($adj_list); $i++)
+        {
+            for($j=0; $j<count($adj_list[$i]); $j++)
+                $vertices[$i]->add_neighbor($vertices[$adj_list[$i][$j]]);
+        }
+
+        return new Graph($adj_matrix,$adj_list,$vertices,$directed);
+    } 
 }
 
 
