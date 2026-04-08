@@ -27,11 +27,36 @@ pos x xs = [y | (x',y) <- zipped, x' == x ]
 
 -- Caesar Cipher
 
+let2int :: Char -> Int
+let2int c = (ord c) - ord 'a'
+
+int2let :: Int -> Char
+int2let n = chr (ord 'a' + n)
+
 caesarEncodeChar :: Int -> Char -> Char
 caesarEncodeChar n c 
-  | ord c + n > ord 'z' = chr (ord 'a' + (ord c + n - 1) `mod` ord 'z')
   | c == ' '            = ' '
-  | otherwise           = chr (ord c + n)
+  | otherwise           = int2let ((let2int c + n) `mod` 26)
 
 caesarEncode :: String -> Int -> String
 caesarEncode s n = map (caesarEncodeChar n) s
+
+caesarDecode :: String -> Int -> String
+caesarDecode s n = caesarEncode s (-n)
+
+-- counting lowers
+
+lowers :: [Char] -> Int
+lowers xs = length [ x | x <- xs, x >='a' && x <='z' ]
+
+count :: Eq a => a -> [a] -> Int
+count needle haystack = length [x | x <- haystack, x == needle]
+
+-- freq tables of lower chars
+
+percent :: Int -> Int -> Float
+percent n m = (fromIntegral n / fromIntegral m) * 100
+
+
+-- freqs :: [Char] -> [Float]
+freqs str = [ percent (count c str) (lowers str) | c <- ['a'..'z'] ]
