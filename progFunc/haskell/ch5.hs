@@ -10,6 +10,9 @@ primes :: Integral a => a -> [a]
 primes n = [x | x <- [2..n], prime x]
 
 
+findkv :: Eq a => a -> [(a,b)] -> [b]
+findkv key list = [value | (actualKey,value) <- list, key == actualKey ]
+
 
 adj :: [a] -> [(a,a)]
 adj xs = zip xs (tail xs)
@@ -60,3 +63,55 @@ percent n m = (fromIntegral n / fromIntegral m) * 100
 
 -- freqs :: [Char] -> [Float]
 freqs str = [ percent (count c str) (lowers str) | c <- ['a'..'z'] ]
+
+chisqr :: [Float] -> [Float] -> Float
+chisqr ofs efs = sum [ (o - e)^2 / e | (o,e) <- zip ofs efs ]
+
+rotate :: [a] -> Int -> [a]
+rotate xs n = drop n xs ++ take n xs
+
+-- Exercícios:
+
+-- Ex 1
+sumsqrs = sum [ x^2 | x <- [1..100] ]
+
+-- Ex 2
+
+grid :: Int -> Int -> [(Int,Int)]
+-- todas combinacoes de As e Bs em pares: [ (a,b) | a <- A, b <- B ]
+grid m n = [ (x,y) | x <- [0..m], y <- [0..n]]
+
+-- Ex 3
+
+squareGrid :: Int -> [(Int,Int)]
+squareGrid n = [ (x,y) | (x,y) <- grid n n, x /= y]
+
+-- Ex 4
+
+myReplicate :: Int -> a -> [a]
+myReplicate n x = [x | _ <- [1..n]]
+
+-- Ex 5
+
+pythagoreans :: Int -> [(Int,Int,Int)]
+
+-- todos quadrados de 1 a n
+pythagoreans n = [(x,y,z) | x <- [1..n], y <- [1..n], z <- [y..n],
+  x^2 + y^2 == z^2]
+
+-- Ex 6
+
+perfects :: Int -> [Int]
+perfects n = [x | x <- [1..n], x == sum (init (factors x))]
+
+-- Ex 7 
+
+l1 = [ (x,y) | x <- [1,2], y <- [3,4]]
+l2 = concat [ [(x,y) | y <- [3,4]] | x <- [1,2] ]
+
+-- Ex 8 
+
+-- queremos pegar uma funcao que retorna em uma key:value list todos os valores de uma chave, e usar pra retornar a posicao de um elemento no array.
+-- como  a posicao do elemento em um array pode ser representada deste modo?
+
+poskv :: a -> [a] 
