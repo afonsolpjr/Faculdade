@@ -114,4 +114,19 @@ l2 = concat [ [(x,y) | y <- [3,4]] | x <- [1,2] ]
 -- queremos pegar uma funcao que retorna em uma key:value list todos os valores de uma chave, e usar pra retornar a posicao de um elemento no array.
 -- como  a posicao do elemento em um array pode ser representada deste modo?
 
-poskv :: a -> [a] 
+positions_kv :: Eq a => a -> [a] -> [Int] 
+
+positions_kv needle haystack = findkv needle zipped_haystack
+  where zipped_haystack = zip haystack [0..(length haystack)-1]
+
+scalarproduct :: [Int] -> [Int] -> Int
+-- he wants it in a similar way to the definition of chisqr on the book
+scalarproduct v1 v2= sum [ a*b | (a,b) <- zip v1 v2]
+
+
+-- Exercicio 10 vai ficar pra depois k
+-- Ele usa essa tabela de frequencias aqui 
+-- table = [8.1, 1.5, 2.8, 4.2, 12.7, 2.2, 2.0, 6.1, 7.0,
+-- 0.2, 0.8, 4.0, 2.4, 6.7, 7.5, 1.9, 0.1, 6.0,
+-- 6.3, 9.0, 2.8, 1.0, 2.4, 0.2, 2.0, 0.1]
+
