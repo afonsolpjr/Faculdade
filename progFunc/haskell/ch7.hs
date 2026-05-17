@@ -221,3 +221,23 @@ dropuai' p (x:xs)
 dropuai :: ( a -> Bool) -> [a] -> [a]
 dropuai p = foldl (\xs x -> if p x && null xs then [] else xs ++ [x]  ) [] 
 
+
+mapfold :: (a -> a) -> [a] -> [a]
+mapfold f   = foldr (\x xs-> (f x):xs) []
+
+filterfold :: (a -> Bool) -> [a] -> [Bool]
+filterfold  p = foldr (\x xs -> (p x):xs) []
+
+-- Using foldl, define a function dec2int :: [Int] -> Int that converts a decimal number into an integer. For example:
+
+dec2int :: [Int] -> Int
+dec2int = foldl (\acc x -> 10*acc + x ) 0
+
+
+-- curry and uncurry
+
+curri :: ((a,b) -> c) -> a -> b -> c
+curri f     = (\a b -> f (a,b))
+
+uncurri :: (a -> b -> c) -> (a,b) -> c
+uncurri f   = (\(a,b) -> f a b )
