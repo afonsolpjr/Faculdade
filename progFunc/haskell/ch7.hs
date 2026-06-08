@@ -122,7 +122,7 @@ encode :: String -> [Bit]
 -- thats sick
 -- encode str = concat (map pad8 (map int2bin (map ord str )))
 
-encode =  concat .map (pad8 . int2bin . ord) 
+encode =  concat . map (pad8 . int2bin . ord) 
 
 
 
@@ -221,19 +221,21 @@ dropuai' p (x:xs)
 dropuai :: ( a -> Bool) -> [a] -> [a]
 dropuai p = foldl (\xs x -> if p x && null xs then [] else xs ++ [x]  ) [] 
 
-
+-- Ex 3
 mapfold :: (a -> a) -> [a] -> [a]
 mapfold f   = foldr (\x xs-> (f x):xs) []
 
 filterfold :: (a -> Bool) -> [a] -> [Bool]
 filterfold  p = foldr (\x xs -> (p x):xs) []
 
+
+-- Ex 4
 -- Using foldl, define a function dec2int :: [Int] -> Int that converts a decimal number into an integer. For example:
 
 dec2int :: [Int] -> Int
 dec2int = foldl (\acc x -> 10*acc + x ) 0
 
-
+-- Ex 5 
 -- curry and uncurry
 
 curri :: ((a,b) -> c) -> a -> b -> c
@@ -241,3 +243,50 @@ curri f     = (\a b -> f (a,b))
 
 uncurri :: (a -> b -> c) -> (a,b) -> c
 uncurri f   = (\(a,b) -> f a b )
+
+
+-- Unfold: unfold p h t x :
+-- unfold p h t vai gera
+
+
+unfold :: (a -> Bool) -> (a -> b) -> (a -> a) -> a -> [b]
+unfold p h t x      | p x           = []
+                    | otherwise     = h x : unfold p h t (t x) 
+
+-- chop8 chops a list of 0,1s into 8 bits list
+-- using unfold !!!!
+
+chop8' :: [Int] -> [[Int]]
+chop8' = unfold null (\xs -> take 8 (xs ++ repeat 0)) (drop 8)
+
+
+
+mapunfold :: (a -> b) -> [a] -> [b]
+mapunfold f = unfold null (f . head) tail
+
+-- remembering : 
+-- The higher-order library function iterate produces an infinite list 
+-- by applying a function an increasing number of times to a valu
+
+iterateunfold :: (a -> a) -> a -> [a]
+iterateunfold f = unfold (\_ -> False) f f  
+
+
+-- Ex 7
+
+           
+addParity :: [Bit] -> [Bit]
+addParity x     
+  | odd (count 1 x)     = concat [x,[1]]
+  | otherwise           = concat [x,[0]]
+
+encodeParity :: String -> [Bit]
+encodeParity =  concat . map (addParity . pad8 . int2bin . ord) 
+
+-- returns the 8-bit char if succeeded
+checkParity :: [Bit] -> [Bit]
+checkParity x 
+  | odd (count 1 (take 8 x) ) && (last x) == 1   = take 8 x
+  | even (count 1 (take 8 x) ) && (last x) == 0   = take 8 x
+  | otherwise                           = error "Parity Error"
+
