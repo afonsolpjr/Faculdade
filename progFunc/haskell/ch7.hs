@@ -283,6 +283,11 @@ addParity x
 encodeParity :: String -> [Bit]
 encodeParity =  concat . map (addParity . pad8 . int2bin . ord) 
 
+
+encodeFault :: String -> [Bit]
+encodeFault =  concat . map (tail . addParity . pad8 . int2bin . ord) 
+
+
 -- returns the 8-bit char if succeeded
 checkParity :: [Bit] -> [Bit]
 checkParity x 
@@ -290,3 +295,36 @@ checkParity x
   | even (count 1 (take 8 x) ) && (last x) == 0   = take 8 x
   | otherwise                           = error "Parity Error"
 
+--- Decoding. First group in 'bytes'
+chop9 :: [Bit] -> [[Bit]]
+chop9 []    = []
+chop9 x     = take 9 x : chop9 (drop 9 x)
+
+decodeParity :: [Bit] -> String
+decodeParity  = map ( chr . bin2int . checkParity) . chop9 
+
+-- Exercicio 9 
+
+altMap :: (a -> b) -> (a -> b) -> [a] -> [b]
+altMap _ _ []     = []
+altMap f s (x:xs)   = f x : altMap s f xs
+
+-- Exercicio 10
+
+int2dec :: Int -> [Int]
+int2dec y = reverse (convert y)
+  where 
+    convert x  
+      | x < 10  = [x]
+      | otherwise = (x `mod` 10):(convert (x `div` 10))
+
+luhnDouble :: Int -> Int
+luhnDouble x  
+  | x * 2 >= 10   = x*2 - 9
+  | otherwise     = x*2
+
+luhnAlt :: Int -> Bool
+luhnAlt x = (luhnSum x) `mod` 10 == 0
+  where
+    luhnSum y = sum (altMap id luhnDouble (reverse (int2dec y)))
+  
