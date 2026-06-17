@@ -1,0 +1,36 @@
+exercicios do capitulo 16:
+
+
+
+Using the following definition for the library function that decides if all
+elements of a list satisfy a predicate
+all p [] = True
+all p (x:xs) = p x && all p xs
+
+
+complete the proof of the correctness of replicate by showing that it pro-
+duces a list with identical elements, all (== x) (replicate n x), by in-
+duction on n >= 0. Hint: show that the property is always True
+
+
+---- Exercicio 3 ------------
+dada a definicao
+
+all :: (a -> Bool ) -> [a] -> Bool
+all p []      = True
+all p (x:xs)  = (p x) && all p xs
+
+
+Queremos mostrar que: 
+
+
+all (== x) (replicate n x) é sempre True
+
+Para todo n e para todo x, (all (== x) (replicate n x)) = True
+
+
+para n = 0
+  (all (== x) (replicate 0 x)) = True
+  (all (== x) []) = True
+    pela definicao do all (1)
+    
