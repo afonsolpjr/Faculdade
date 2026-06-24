@@ -23,4 +23,21 @@ formas de avaliar funções onde todos os seus parâmetros precisam ser avaliado
 o que é non-strict evaluation?
 uma forma de avaliação de funções onde ela pode retornar um resultado antes da avaliação dos seus parâmetros, como por exemplo na avaliação preguiçosa.
 
-linguagens preguicosas precisam ser puramente funcionais? 
+linguagens preguicosas precisam ser puramente funcionais?
+
+## Um servidor em haskell
+
+Como exemplo de programa que lida com todos os problemas citados, o paper fala sobre um servidor em haskell:
+
+  - é intensivo em I/o
+  - requer concorrencia
+  - requer uso de bibliotecas baixo nivel de I/O
+  - requer robustez no tratamento de erros, timing outs, etc... é de fato uma programação com efeitos colaterais
+
+
+
+
+ 
+
+
+ 
